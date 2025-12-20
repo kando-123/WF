@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="pl.polsl.wf.ui.main.MainFragment"
+        android:label="@string/mainFragment_label" />
+
+    <fragment
+        android:id="@+id/languagesFragment"
+        android:name="pl.polsl.wf.ui.languages.LanguagesFragment"
+        android:label="@string/languagesFragment_label" />
+
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="pl.polsl.wf.ui.results.ResultsFragment"
+        android:label="@string/resultsFragment_label" />
+
+</navigation>

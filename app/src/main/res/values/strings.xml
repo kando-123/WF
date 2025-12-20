@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">WF</string>
+    <string name="home">Home</string>
+    <string name="languages">Languages</string>
+    <string name="results">Results</string>
+    <string name="mainFragment_label">Main</string>
+    <string name="languagesFragment_label">Languages</string>
+    <string name="resultsFragment_label">Results</string>
+    <string name="ToolbarTitle">WikiFilter</string>
+</resources>
