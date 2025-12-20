@@ -3,15 +3,15 @@ package pl.polsl.wf.domain.usecase;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import pl.polsl.wf.domain.repository.LanguagesRepository;
+import pl.polsl.wf.domain.repository.ILanguagesRepository;
 import pl.polsl.wf.domain.model.Language;
 
 public class LanguagesUseCase
 {
-    private final LanguagesRepository languagesRepository;
+    private final ILanguagesRepository languagesRepository;
     private final DownloadUseCase downloadUseCase;
 
-    public LanguagesUseCase(LanguagesRepository languagesRepository,
+    public LanguagesUseCase(ILanguagesRepository languagesRepository,
                             DownloadUseCase downloadUseCase)
     {
         this.languagesRepository = languagesRepository;

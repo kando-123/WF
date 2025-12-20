@@ -1,6 +1,6 @@
 package pl.polsl.wf.domain.repository;
 
-public interface TranslationRepository
+public interface ITranslationRepository
 {
 
 }

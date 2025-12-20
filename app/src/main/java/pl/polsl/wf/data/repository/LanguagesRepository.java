@@ -3,12 +3,15 @@ package pl.polsl.wf.data.repository;
 import java.util.List;
 
 import pl.polsl.wf.domain.model.Language;
-import pl.polsl.wf.domain.repository.LanguagesRepository;
-import javax.inject.Inject;
+import pl.polsl.wf.domain.repository.ILanguagesRepository;
+
 import javax.inject.Singleton;
 
+/**
+ * Managest the list of languages and their statuses (active, downloaded).
+ */
 @Singleton
-public class LanguagesRepositoryImpl implements LanguagesRepository
+public class LanguagesRepository implements ILanguagesRepository
 {
     @Override
     public List<Language> getAllLanguages()

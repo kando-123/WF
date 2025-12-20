@@ -4,7 +4,7 @@ import java.util.List;
 
 import pl.polsl.wf.domain.model.Language;
 
-public interface LanguagesRepository
+public interface ILanguagesRepository
 {
     List<Language> getAllLanguages();
     Language getLanguageByCode(String languageCode);
