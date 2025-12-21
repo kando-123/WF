@@ -1,4 +1,4 @@
-package pl.polsl.wf.domain.model;
+package pl.polsl.wf.data.source;
 
 public enum TranslationDirection
 {

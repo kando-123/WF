@@ -5,15 +5,20 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TranslationEntryPhrase
+public class TranslationEntryPhraseDto
 {
     private final String text;
     private final String link;
 
-    public TranslationEntryPhrase(@Nonnull String text, @Nullable String link)
+    public TranslationEntryPhraseDto(@Nonnull String text, @Nullable String link)
     {
         this.text = text;
         this.link = link;
+    }
+
+    public TranslationEntryPhraseDto(@Nonnull String text)
+    {
+        this(text, text);
     }
 
     public String getText()

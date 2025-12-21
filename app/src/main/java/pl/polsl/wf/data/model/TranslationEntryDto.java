@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 /**
  * Data transfer object representing a single translation entry.
  */
-public class TranslationEntry
+public class TranslationEntryDto
 {
     /**
      * Definition of the headword being translated, specifying what meaning the phrases correspond.
@@ -19,10 +19,10 @@ public class TranslationEntry
     /**
      * Phrases corresponding to the meaning of the headword.
      */
-    private final List<TranslationEntryPhrase> phrases;
+    private final List<TranslationEntryPhraseDto> phrases;
 
-    public TranslationEntry(@Nullable String definition,
-                            @Nonnull List<TranslationEntryPhrase> phrases)
+    public TranslationEntryDto(@Nullable String definition,
+                               @Nonnull List<TranslationEntryPhraseDto> phrases)
     {
         this.definition = definition;
         this.phrases = new ArrayList<>(phrases);
@@ -33,7 +33,7 @@ public class TranslationEntry
         return Optional.ofNullable(definition);
     }
 
-    public List<TranslationEntryPhrase> getPhrases()
+    public List<TranslationEntryPhraseDto> getPhrases()
     {
         return new ArrayList<>(phrases);
     }

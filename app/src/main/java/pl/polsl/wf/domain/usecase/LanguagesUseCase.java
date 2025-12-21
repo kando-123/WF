@@ -3,15 +3,15 @@ package pl.polsl.wf.domain.usecase;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import pl.polsl.wf.domain.repository.ILanguagesRepository;
+import pl.polsl.wf.domain.repository.LanguagesRepository;
 import pl.polsl.wf.domain.model.Language;
 
 public class LanguagesUseCase
 {
-    private final ILanguagesRepository languagesRepository;
+    private final LanguagesRepository languagesRepository;
     private final DownloadUseCase downloadUseCase;
 
-    public LanguagesUseCase(ILanguagesRepository languagesRepository,
+    public LanguagesUseCase(LanguagesRepository languagesRepository,
                             DownloadUseCase downloadUseCase)
     {
         this.languagesRepository = languagesRepository;
@@ -27,21 +27,21 @@ public class LanguagesUseCase
     {
         return languagesRepository.getAllLanguages()
                 .stream()
-                .filter(Language::isActive)
+                .filter(Language::active)
                 .collect(Collectors.toList());
     }
 
     public void toggleLanguage(String languageCode)
     {
         Language language = languagesRepository.getLanguageByCode(languageCode);
-        language.setActive(!language.isActive());
+        language.setActive(!language.active());
         languagesRepository.updateLanguage(language);
     }
 
     public void downloadLanguage(String languageCode)
     {
         Language language = languagesRepository.getLanguageByCode(languageCode);
-        if (language.isDownloaded())
+        if (language.downloaded())
         {
             throw new IllegalStateException("Language is already downloaded");
         }

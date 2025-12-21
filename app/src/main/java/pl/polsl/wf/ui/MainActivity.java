@@ -2,13 +2,9 @@ package pl.polsl.wf.ui;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -21,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import pl.polsl.wf.R;
 import pl.polsl.wf.common.state.UiState;
 import pl.polsl.wf.domain.model.Language;
-import pl.polsl.wf.domain.model.TranslationDirection;
+import pl.polsl.wf.data.source.TranslationDirection;
 import pl.polsl.wf.ui.languages.LanguagesViewModel;
 
 @AndroidEntryPoint

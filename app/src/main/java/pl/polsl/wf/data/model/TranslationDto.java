@@ -5,19 +5,19 @@ import java.util.*;
 /**
  * Raw data from the Wiktionary API or from the local files before mapping to the domain model.
  */
-public class Translation
+public class TranslationDto
 {
     private final String headword;
     private final List<String> attributes;
     private final String sourceLanguageCode;
     private final String targetLanguageCode;
-    private final List<TranslationEntry> entries;
+    private final List<TranslationEntryDto> entries;
 
-    public Translation(String headword,
-                       List<String> attributes,
-                       String sourceLanguageCode,
-                       String targetLanguageCode,
-                       List<TranslationEntry> entries)
+    public TranslationDto(String headword,
+                          List<String> attributes,
+                          String sourceLanguageCode,
+                          String targetLanguageCode,
+                          List<TranslationEntryDto> entries)
     {
         this.headword = headword;
         this.attributes = new ArrayList<>(attributes);
@@ -46,7 +46,7 @@ public class Translation
         return targetLanguageCode;
     }
 
-    public List<TranslationEntry> getEntries()
+    public List<TranslationEntryDto> getEntries()
     {
         return new ArrayList<>(entries);
     }
