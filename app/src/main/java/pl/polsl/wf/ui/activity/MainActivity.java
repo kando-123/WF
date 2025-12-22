@@ -1,4 +1,4 @@
-package pl.polsl.wf.ui;
+package pl.polsl.wf.ui.activity;
 
 import android.os.Bundle;
 
@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.*;
 
@@ -19,13 +21,22 @@ import pl.polsl.wf.common.state.UiState;
 import pl.polsl.wf.domain.model.Language;
 import pl.polsl.wf.data.source.TranslationDirection;
 import pl.polsl.wf.ui.languages.LanguagesViewModel;
+import pl.polsl.wf.ui.main.MainViewModel;
+import pl.polsl.wf.ui.results.ResultsViewModel;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity
 {
-    @Inject
-    LanguagesViewModel languagesViewModel;
     private NavController navController;
+
+    @Inject
+    public MainActivity(MainViewModel mainViewModel,
+                        LanguagesViewModel languagesViewModel,
+                        ResultsViewModel resultsViewModel)
+    {
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -39,9 +50,9 @@ public class MainActivity extends AppCompatActivity
         navController = navHostFragment.getNavController();
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        NavigationUI.setUpWithNavController(bottomNav, navController);
+        NavigationUI.setupWithNavController(bottomNav, navController);
 
-        languagesViewModel.getLanguagesState().observe(this, this::onLanguagesStateChanged);
+        // languagesViewModel.getLanguagesState().observe(this, this::onLanguagesStateChanged);
 
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
         dispatcher.addCallback(this, new OnBackPressedCallback(true)
@@ -61,13 +72,13 @@ public class MainActivity extends AppCompatActivity
     {
         if (state instanceof UiState.Success<List<Language>> success)
         {
-            updateLanguagesDisplay((List<Language>) success.data);
+            updateLanguagesDisplay(success.data);
         }
     }
 
     public void navigateToLanguages()
     {
-        navController.navigate(R.id.action_mainFragment_to_languagesFragment);
+        //navController.navigate(R.id.action_mainFragment_to_languagesFragment);
     }
 
     public void navigateToResults(String query,
@@ -78,7 +89,7 @@ public class MainActivity extends AppCompatActivity
         args.putString("query", query);
         args.putStringArrayList("languages", new ArrayList<>(languages));
         args.putSerializable("directions", direction);
-        navController.navigate(R.id.action_mainFragment_to_resultsFragment, args);
+        //navController.navigate(R.id.action_mainFragment_to_resultsFragment, args);
     }
 
     public void navigateToMain()
@@ -89,7 +100,7 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy()
     {
         super.onDestroy();
-        languagesViewModel.getLanguagesState().removeObservers(this);
+        //languagesViewModel.getLanguagesState().removeObservers(this);
     }
 
     private void updateLanguagesDisplay(List<Language> languages)
