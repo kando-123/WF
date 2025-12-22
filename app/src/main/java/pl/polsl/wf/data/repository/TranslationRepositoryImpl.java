@@ -5,6 +5,7 @@ import java.util.List;
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.model.TranslationDto;
 import pl.polsl.wf.data.source.TranslationDirection;
+import pl.polsl.wf.domain.model.Translation;
 import pl.polsl.wf.domain.repository.TranslationRepository;
 
 /**
@@ -13,7 +14,7 @@ import pl.polsl.wf.domain.repository.TranslationRepository;
 public class TranslationRepositoryImpl implements TranslationRepository
 {
     @Override
-    public void getTranslations(String headword, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, DataCallback<List<TranslationDto>> callback)
+    public void getTranslations(String headword, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, DataCallback<List<Translation>> callback)
     {
         throw new UnsupportedOperationException("Not implemented yet.");
     }

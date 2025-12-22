@@ -3,8 +3,8 @@ package pl.polsl.wf.domain.repository;
 import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
-import pl.polsl.wf.data.model.TranslationDto;
 import pl.polsl.wf.data.source.TranslationDirection;
+import pl.polsl.wf.domain.model.Translation;
 
 public interface TranslationRepository
 {
@@ -12,7 +12,7 @@ public interface TranslationRepository
                          String mainLanguageCode,
                          List<String> foreignLanguageCodes,
                          TranslationDirection direction,
-                         DataCallback<List<TranslationDto>> callback);
+                         DataCallback<List<Translation>> callback);
 
     void getHints(String input,
                   String mainLanguageCode,
