@@ -7,4 +7,5 @@
     <string name="languagesFragment_label">Languages</string>
     <string name="resultsFragment_label">Results</string>
     <string name="ToolbarTitle">WikiFilter</string>
+    <string name="query_input">Type to translate</string>
 </resources>

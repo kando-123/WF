@@ -13,30 +13,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.*;
 
-import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import pl.polsl.wf.R;
 import pl.polsl.wf.common.state.UiState;
 import pl.polsl.wf.domain.model.Language;
 import pl.polsl.wf.data.source.TranslationDirection;
-import pl.polsl.wf.ui.languages.LanguagesViewModel;
-import pl.polsl.wf.ui.main.MainViewModel;
-import pl.polsl.wf.ui.results.ResultsViewModel;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity
 {
     private NavController navController;
-
-    @Inject
-    public MainActivity(MainViewModel mainViewModel,
-                        LanguagesViewModel languagesViewModel,
-                        ResultsViewModel resultsViewModel)
-    {
-
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,13 +33,14 @@ public class MainActivity extends AppCompatActivity
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
-        assert navHostFragment != null;
+        if (navHostFragment == null)
+        {
+            throw new IllegalStateException("NavHostFragment not found");
+        }
         navController = navHostFragment.getNavController();
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         NavigationUI.setupWithNavController(bottomNav, navController);
-
-        // languagesViewModel.getLanguagesState().observe(this, this::onLanguagesStateChanged);
 
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
         dispatcher.addCallback(this, new OnBackPressedCallback(true)
@@ -68,28 +56,16 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void onLanguagesStateChanged(UiState<List<Language>> state)
-    {
-        if (state instanceof UiState.Success<List<Language>> success)
-        {
-            updateLanguagesDisplay(success.data);
-        }
-    }
-
     public void navigateToLanguages()
     {
-        //navController.navigate(R.id.action_mainFragment_to_languagesFragment);
+        navController.navigate(R.id.action_mainFragment_to_languagesFragment);
     }
 
-    public void navigateToResults(String query,
-                                  List<String> languages,
-                                  TranslationDirection direction)
+    public void navigateToResults(String query)
     {
         Bundle args = new Bundle();
         args.putString("query", query);
-        args.putStringArrayList("languages", new ArrayList<>(languages));
-        args.putSerializable("directions", direction);
-        //navController.navigate(R.id.action_mainFragment_to_resultsFragment, args);
+        navController.navigate(R.id.action_mainFragment_to_resultsFragment, args);
     }
 
     public void navigateToMain()
@@ -100,7 +76,6 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy()
     {
         super.onDestroy();
-        //languagesViewModel.getLanguagesState().removeObservers(this);
     }
 
     private void updateLanguagesDisplay(List<Language> languages)

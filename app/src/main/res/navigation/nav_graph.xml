@@ -7,7 +7,17 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="pl.polsl.wf.ui.main.MainFragment"
-        android:label="@string/mainFragment_label" />
+        android:label="@string/mainFragment_label">
+
+        <action
+            android:id="@+id/action_mainFragment_to_languagesFragment"
+            app:destination="@id/languagesFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_resultsFragment"
+            app:destination="@id/resultsFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/languagesFragment"
