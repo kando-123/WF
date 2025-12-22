@@ -2,8 +2,6 @@ package pl.polsl.wf.domain.usecase;
 
 import static pl.polsl.wf.common.util.Constants.MIN_HINT_INPUT_LENGTH;
 
-import androidx.annotation.NonNull;
-
 import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;

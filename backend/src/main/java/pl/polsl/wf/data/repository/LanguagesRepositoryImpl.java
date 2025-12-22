@@ -6,12 +6,14 @@ import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.domain.model.Language;
 import pl.polsl.wf.domain.repository.LanguagesRepository;
 
-import javax.inject.Singleton;
+// @kamil
+//import javax.inject.Singleton;
 
 /**
  * Managest the list of languages and their statuses (active, downloaded).
  */
-@Singleton
+// @kamil
+//@Singleton
 public class LanguagesRepositoryImpl implements LanguagesRepository
 {
     @Override

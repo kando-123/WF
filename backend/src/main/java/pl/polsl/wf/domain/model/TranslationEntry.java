@@ -1,7 +1,6 @@
 package pl.polsl.wf.domain.model;
 
-import androidx.annotation.NonNull;
-
+//import androidx.annotation.NonNull;
 import java.util.*;
 
 public record TranslationEntry(String definition,
@@ -20,7 +19,7 @@ public record TranslationEntry(String definition,
         return new ArrayList<>(phrases);
     }
 
-    @NonNull
+//    @NonNull
     @Override
     public String toString()
     {

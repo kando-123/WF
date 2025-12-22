@@ -3,7 +3,6 @@ package pl.polsl.wf.data.repository;
 import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
-import pl.polsl.wf.data.model.TranslationDto;
 import pl.polsl.wf.data.source.TranslationDirection;
 import pl.polsl.wf.domain.model.Translation;
 import pl.polsl.wf.domain.repository.TranslationRepository;

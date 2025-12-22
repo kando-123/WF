@@ -1,22 +1,31 @@
 package pl.polsl.wf.data.model;
 
 import java.util.Optional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+// @kamil
+//import javax.annotation.Nonnull;
+//import javax.annotation.Nullable;
 
 public class TranslationEntryPhraseDto
 {
     private final String text;
     private final String link;
 
-    public TranslationEntryPhraseDto(@Nonnull String text, @Nullable String link)
+    public TranslationEntryPhraseDto(
+// @kamil
+//            @Nonnull
+            String text,
+// @kamil
+//            @Nullable
+            String link)
     {
         this.text = text;
         this.link = link;
     }
 
-    public TranslationEntryPhraseDto(@Nonnull String text)
+    public TranslationEntryPhraseDto(
+// @kamil
+//            @Nonnull
+            String text)
     {
         this(text, text);
     }

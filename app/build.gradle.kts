@@ -35,6 +35,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":backend"))
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

@@ -1,16 +1,15 @@
 package pl.polsl.wf.data.source;
 
-import java.util.Collections;
 import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.model.TranslationDto;
 
 /**
- * Implementation of ITranslationDataSource interface for offline data source. It provides
- * translations based on the local files.
+ * Implementation of ITranslationDataSource interface for online data source. It communicates
+ * with Wiktionary and parses the responses.s
  */
-public class OfflineDataSource implements TranslationDataSource
+public class OnlineDataSource implements TranslationDataSource
 {
     @Override
     public void getTranslations(String headword, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, DataCallback<List<TranslationDto>> callback)
