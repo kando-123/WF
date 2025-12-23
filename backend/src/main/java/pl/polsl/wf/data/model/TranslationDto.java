@@ -13,6 +13,10 @@ public class TranslationDto
     private final String targetLanguageCode;
     private final List<TranslationEntryDto> entries;
 
+    private static final List<String> allAttributes = List.of(
+            "Noun", "Verb", "Adjective","Adverb","Preposition", "interjection"
+    );
+
     public TranslationDto(String headword,
                           List<String> attributes,
                           String sourceLanguageCode,
@@ -50,4 +54,5 @@ public class TranslationDto
     {
         return new ArrayList<>(entries);
     }
+    public static List<String> getAllAttributes(){return allAttributes;}
 }
