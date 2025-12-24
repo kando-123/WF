@@ -2,8 +2,6 @@ package pl.polsl.wf.data.source;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.File;
-import java.io.FileWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -20,12 +18,14 @@ import pl.polsl.wf.data.model.TranslationDto;
 
 class MarkdownHeader
 {
+    public final int level;
     public final int resStart;
     /// position AFTER the markdown ends
     public final int resEnd;
     public final String headword;
     public MarkdownHeader(int level, int startPos, String markdown)
     {
+        this.level = level;
         Pattern regex = Pattern.compile("(^|[^=])={"+level+"} ?([^=]+?) ?={"+level+"}($|[^=])");
         Matcher matcher = regex.matcher(markdown);
 
@@ -46,6 +46,31 @@ class MarkdownHeader
             headword = matcher.group(2);
         }
     }
+}
+
+class MarkdownChunk {
+    public final int level;
+    public final int resStart;
+    /// position AFTER the markdown ends
+    public final int resEnd;
+    public final String headword;
+    public final CharSequence contents;
+
+    public MarkdownChunk(MarkdownHeader header, String markdown) {
+        level = header.level;
+        resStart = header.resStart;
+        headword = header.headword;
+
+        MarkdownHeader nextHeader = new MarkdownHeader(level, header.resEnd, markdown);
+        if (nextHeader.resStart == -1) //end of input
+        {
+            resEnd = markdown.length();
+        } else {
+            resEnd = nextHeader.resEnd;
+        }
+        contents = markdown.subSequence(resStart, resEnd);
+    }
+
 }
 
 public class OnlineDataSource implements TranslationDataSource
@@ -78,12 +103,6 @@ public class OnlineDataSource implements TranslationDataSource
         return res;
     }
 
-
-    private String getMarkdownChunk(int level, int start, String headword, String markdow)
-    {
-        return  "";
-
-    }
     @Override
     public void getTranslations(String headword, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, DataCallback<List<TranslationDto>> callback)
     {
@@ -91,15 +110,15 @@ public class OnlineDataSource implements TranslationDataSource
 
         if (direction == TranslationDirection.UNIDIRECTIONAL_TO_MAIN)
         {
-            for (String language: foreignLanguageCodes)
-            {
-                String langChunk = getMarkdownChunk(2, 0, language, markdown);
-                for (String attribute : TranslationDto.getAllAttributes())
-                {
-                    String attrChunk = getMarkdownChunk(3, 0, attribute, langChunk);
-                    
-                }
-            }
+//            for (String language: foreignLanguageCodes)
+//            {
+//                String langChunk = getMarkdownChunk(2, 0, language, markdown);
+//                for (String attribute : TranslationDto.getAllAttributes())
+//                {
+//                    String attrChunk = getMarkdownChunk(3, 0, attribute, langChunk);
+//
+//                }
+//            }
 
         }
 
