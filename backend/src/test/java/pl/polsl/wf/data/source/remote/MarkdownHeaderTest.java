@@ -1,4 +1,4 @@
-package pl.polsl.wf.data.source;
+package pl.polsl.wf.data.source.remote;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,10 +9,10 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 
-import pl.polsl.wf.data.source.MarkdownHeader;
+import pl.polsl.wf.data.source.remote.MarkdownHeader;
 
 @RunWith(Parameterized.class)
-public class MarkdownHeaderParameterizedTest {
+public class MarkdownHeaderTest {
 
     @Parameterized.Parameters(name = "{index}: markdown=\"{0}\"")
     public static Collection<Object[]> data() {

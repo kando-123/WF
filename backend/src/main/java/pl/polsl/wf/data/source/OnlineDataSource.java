@@ -1,7 +1,5 @@
 package pl.polsl.wf.data.source;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -10,68 +8,6 @@ import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.model.TranslationDto;
-
-/**
- * Implementation of ITranslationDataSource interface for online data source. It communicates
- * with Wiktionary and parses the responses.s
- */
-
-class MarkdownHeader
-{
-    public final int level;
-    public final int resStart;
-    /// position AFTER the markdown ends
-    public final int resEnd;
-    public final String headword;
-    public MarkdownHeader(int level, int startPos, String markdown)
-    {
-        this.level = level;
-        Pattern regex = Pattern.compile("(^|[^=])={"+level+"} ?([^=]+?) ?={"+level+"}($|[^=])");
-        Matcher matcher = regex.matcher(markdown);
-
-        if (!matcher.find(startPos))
-        {
-            resStart = -1;
-            resEnd = -1;
-            headword = "";
-        }
-        else
-        {
-            // if the first symbol was ^, the result starts at 0
-            // else remove the additional character
-            resStart = matcher.start() + matcher.group(1).length();
-            // if the last symbol was $, remove nothing
-            // else remove the additional character
-            resEnd = matcher.end() - matcher.group(3).length();
-            headword = matcher.group(2);
-        }
-    }
-}
-
-class MarkdownChunk {
-    public final int level;
-    public final int resStart;
-    /// position AFTER the markdown ends
-    public final int resEnd;
-    public final String headword;
-    public final CharSequence contents;
-
-    public MarkdownChunk(MarkdownHeader header, String markdown) {
-        level = header.level;
-        resStart = header.resStart;
-        headword = header.headword;
-
-        MarkdownHeader nextHeader = new MarkdownHeader(level, header.resEnd, markdown);
-        if (nextHeader.resStart == -1) //end of input
-        {
-            resEnd = markdown.length();
-        } else {
-            resEnd = nextHeader.resEnd;
-        }
-        contents = markdown.subSequence(resStart, resEnd);
-    }
-
-}
 
 public class OnlineDataSource implements TranslationDataSource
 {
