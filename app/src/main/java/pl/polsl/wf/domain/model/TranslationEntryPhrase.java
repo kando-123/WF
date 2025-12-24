@@ -1,6 +1,6 @@
 package pl.polsl.wf.domain.model;
 
-import androidx.annotation.NonNull;
+//import androidx.annotation.NonNull;
 
 public record TranslationEntryPhrase(String text, String link)
 {
@@ -9,7 +9,7 @@ public record TranslationEntryPhrase(String text, String link)
         return link != null;
     }
 
-    @NonNull
+//    @NonNull
     @Override
     public String toString()
     {

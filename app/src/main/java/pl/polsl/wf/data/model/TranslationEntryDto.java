@@ -1,9 +1,10 @@
 package pl.polsl.wf.data.model;
 
 import java.util.*;
+// @kamil
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+//import javax.annotation.Nonnull;
+//import javax.annotation.Nullable;
 
 /**
  * Data transfer object representing a single translation entry.
@@ -13,7 +14,6 @@ public class TranslationEntryDto
     /**
      * Definition of the headword being translated, specifying what meaning the phrases correspond.
      */
-    @Nullable
     private final String definition;
 
     /**
@@ -21,8 +21,8 @@ public class TranslationEntryDto
      */
     private final List<TranslationEntryPhraseDto> phrases;
 
-    public TranslationEntryDto(@Nullable String definition,
-                               @Nonnull List<TranslationEntryPhraseDto> phrases)
+    public TranslationEntryDto(String definition,
+                               List<TranslationEntryPhraseDto> phrases)
     {
         this.definition = definition;
         this.phrases = new ArrayList<>(phrases);

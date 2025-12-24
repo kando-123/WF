@@ -16,9 +16,7 @@ import java.util.*;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import pl.polsl.wf.R;
-import pl.polsl.wf.common.state.UiState;
 import pl.polsl.wf.domain.model.Language;
-import pl.polsl.wf.data.source.TranslationDirection;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity

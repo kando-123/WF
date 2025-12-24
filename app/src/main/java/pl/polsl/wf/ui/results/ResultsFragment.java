@@ -21,4 +21,10 @@ public class ResultsFragment extends Fragment
     {
         return inflater.inflate(R.layout.fragment_results, container, false);
     }
+
+    public void onViewCreated(@NonNull View view,
+                              @Nullable Bundle savedInstanceState)
+    {
+
+    }
 }

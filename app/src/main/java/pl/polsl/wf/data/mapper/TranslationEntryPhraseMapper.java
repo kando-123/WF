@@ -1,7 +1,5 @@
 package pl.polsl.wf.data.mapper;
 
-import android.os.Build;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,6 +1,5 @@
 package pl.polsl.wf.data.source;
 
-import java.util.Collections;
 import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;

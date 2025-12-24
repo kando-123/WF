@@ -1,7 +1,5 @@
 package pl.polsl.wf.data.mapper;
 
-import java.util.List;
-
 import pl.polsl.wf.data.model.*;
 import pl.polsl.wf.domain.model.*;
 

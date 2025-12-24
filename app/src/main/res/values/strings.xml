@@ -8,4 +8,6 @@
     <string name="resultsFragment_label">Results</string>
     <string name="ToolbarTitle">WikiFilter</string>
     <string name="query_input">Type to translate</string>
+    <string name="tv_main_language_default">main language</string>
+    <string name="tv_foreign_language_default">foreign language(s)</string>
 </resources>
