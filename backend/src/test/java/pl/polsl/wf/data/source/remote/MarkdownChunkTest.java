@@ -71,5 +71,44 @@ public class MarkdownChunkTest {
                 "9012345678\n";
         assertEquals(expected, chunk.contents);
     }
+
+    @Test
+    public void thirdLevel3MarkdownChunk () {
+        MarkdownHeader header = new MarkdownHeader(3, 65, "Header 3", markdown);
+        MarkdownChunk chunk = new MarkdownChunk(header, markdown);
+        String expected = "\n" +
+                "8901234567\n";
+        assertEquals(expected, chunk.contents);
+    }
+    @Test
+    public void fourthLevel3MarkdownChunk () {
+        MarkdownHeader header = new MarkdownHeader(3, 79, "Header 3", markdown);
+        System.out.println(markdown.substring(68));
+        MarkdownChunk chunk = new MarkdownChunk(header, markdown);
+        String expected = "\n" +
+                "7890123456\n";
+        assertEquals(expected, chunk.contents);
+    }
+
+    @Test
+    public void hierarchyMarkdownChunk () {
+        MarkdownHeader topHeader = new MarkdownHeader(2, 1, "Header 2", markdown);
+        MarkdownChunk TopChunk = new MarkdownChunk(topHeader, markdown);
+        MarkdownHeader header = new MarkdownHeader(3, 0, "Header 3", TopChunk.contents );
+        MarkdownChunk chunk = new MarkdownChunk(header, TopChunk.contents);
+        String expected = "\n" +
+                "8901234567\n";
+        assertEquals(expected, chunk.contents);
+    }
+    @Test
+    public void hierarchy2MarkdownChunk () {
+        MarkdownHeader topHeader = new MarkdownHeader(2, 1, "Header 2", markdown);
+        MarkdownChunk TopChunk = new MarkdownChunk(topHeader, markdown);
+        MarkdownHeader header = new MarkdownHeader(3, 1, "Header 3", TopChunk.contents );
+        MarkdownChunk chunk = new MarkdownChunk(header, TopChunk.contents);
+        String expected = "\n" +
+                "7890123456\n";
+        assertEquals(expected, chunk.contents);
+    }
 }
 

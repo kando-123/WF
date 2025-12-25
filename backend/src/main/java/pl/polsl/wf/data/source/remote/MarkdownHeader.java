@@ -16,7 +16,7 @@ class MarkdownHeader
     public final int resEnd;
     public final String headword;
 
-    private MarkdownHeader(String regex, int level, int startPos, String markdown)
+    private MarkdownHeader(String regex, int level, int startPos, CharSequence markdown)
     {
         this.level = level;
         Pattern pattern = Pattern.compile(regex);
@@ -41,16 +41,16 @@ class MarkdownHeader
     }
     //first boolean is a dummy, so that the constructors differ.
     //techincally the one with set number should be removed
-    public MarkdownHeader(boolean lessOrEqual, int level, int startPos,  String markdown)
+    public MarkdownHeader(boolean lessOrEqual, int level, int startPos,  CharSequence markdown)
     {
         this("(^|[^=])={1,"+level+"} ?([^=]+?) ?={1,"+level+"}($|[^=])", level, startPos, markdown);
     }
 
-    public MarkdownHeader(int level, int startPos, String headword, String markdown)
+    public MarkdownHeader(int level, int startPos, String headword, CharSequence markdown)
     {
         this("(^|[^=])={"+level+"} ?("+headword+") ?={"+level+"}($|[^=])", level, startPos, markdown);
     }
-    public MarkdownHeader(int level, int startPos, String markdown)
+    public MarkdownHeader(int level, int startPos, CharSequence markdown)
     {
         this("(^|[^=])={"+level+"} ?([^=]+?) ?={"+level+"}($|[^=])", level, startPos, markdown);
     }

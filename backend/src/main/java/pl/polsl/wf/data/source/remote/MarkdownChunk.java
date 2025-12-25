@@ -10,12 +10,12 @@ class MarkdownChunk {
     public final String headword;
     public final CharSequence contents;
 
-    public MarkdownChunk(MarkdownHeader header, String markdown) {
+    public MarkdownChunk(MarkdownHeader header, CharSequence markdown) {
         level = header.level;
         resStart = header.resEnd;
         headword = header.headword;
 
-        MarkdownHeader nextHeader = new MarkdownHeader(level, header.resEnd, markdown);
+        MarkdownHeader nextHeader = new MarkdownHeader(true, level, header.resEnd, markdown);
         if (nextHeader.resStart == -1) //end of input
         {
             resEnd = markdown.length();
