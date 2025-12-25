@@ -12,7 +12,7 @@ class MarkdownChunk {
 
     public MarkdownChunk(MarkdownHeader header, String markdown) {
         level = header.level;
-        resStart = header.resStart;
+        resStart = header.resEnd;
         headword = header.headword;
 
         MarkdownHeader nextHeader = new MarkdownHeader(level, header.resEnd, markdown);
@@ -20,7 +20,7 @@ class MarkdownChunk {
         {
             resEnd = markdown.length();
         } else {
-            resEnd = nextHeader.resEnd;
+            resEnd = nextHeader.resStart;
         }
         contents = markdown.subSequence(resStart, resEnd);
     }
