@@ -9,8 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import pl.polsl.wf.R;
 
+@AndroidEntryPoint
 public class ResultsFragment extends Fragment
 {
     @Nullable

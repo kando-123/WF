@@ -1,5 +1,7 @@
 package pl.polsl.wf.domain.usecase;
 
+import javax.inject.Inject;
+
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.common.util.WrapperDataCallback;
 import pl.polsl.wf.domain.model.Language;
@@ -9,22 +11,20 @@ public class ToggleLanguageUseCase
 {
     private final LanguagesRepository languagesRepo;
 
+    @Inject
     public ToggleLanguageUseCase(LanguagesRepository languagesRepo)
     {
         this.languagesRepo = languagesRepo;
     }
 
-    public void execute(String languageCode,
-                        DataCallback<Language> callback)
+    public void execute(String languageCode, DataCallback<Language> callback)
     {
-        var result = new WrapperDataCallback<Language>();
-        languagesRepo.getLanguageByCode(languageCode, result);
+        var wrapper = new WrapperDataCallback<Language>();
+        languagesRepo.getLanguageByCode(languageCode, wrapper);
         try
         {
-            Language language = result.get();
-            languagesRepo.setLanguageActive(languageCode, !language.active(), result);
-
-            callback.onSuccess(language);
+            Language language = wrapper.get();
+            languagesRepo.setLanguageActive(languageCode, !language.active(), callback);
         }
         catch (Exception e)
         {

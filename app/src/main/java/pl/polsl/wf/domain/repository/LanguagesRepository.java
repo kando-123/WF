@@ -16,5 +16,5 @@ public interface LanguagesRepository
                            boolean active,
                            DataCallback<Language> callback);
 
-    void downloadLanguage(String languageCode);
+    void downloadLanguage(String languageCode, DataCallback<Language> callback);
 }

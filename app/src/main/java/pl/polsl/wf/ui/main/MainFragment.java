@@ -1,12 +1,13 @@
 package pl.polsl.wf.ui.main;
 
-import android.content.res.ColorStateList;
+import static pl.polsl.wf.data.source.TranslationDirection.UNIDIRECTIONAL_TO_FOREIGN;
+import static pl.polsl.wf.data.source.TranslationDirection.UNIDIRECTIONAL_TO_MAIN;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,8 +22,8 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import pl.polsl.wf.R;
+import pl.polsl.wf.common.util.ActivableButtonObserverModel;
 import pl.polsl.wf.data.source.TranslationDirection;
-import pl.polsl.wf.ui.main.model.ArrowButtonModel;
 
 @AndroidEntryPoint
 public class MainFragment extends Fragment
@@ -38,6 +39,7 @@ public class MainFragment extends Fragment
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
+    @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState)
     {
@@ -63,43 +65,57 @@ public class MainFragment extends Fragment
         LiveData<TranslationDirection> translationDirection = viewModel.getTranslationDirection();
         final TranslationDirection current = translationDirection.getValue();
 
-
         MaterialButton bnArrowDown = view.findViewById(R.id.ibn_arrow_down);
-        var modelDown = new ArrowButtonModel<>(bnArrowDown,
-                TranslationDirection.UNIDIRECTIONAL_TO_FOREIGN,
-                viewModel,
-                TranslationDirection.UNIDIRECTIONAL_TO_MAIN.isIncludedIn(current));
-        modelDown.setOnActivateCallback(b ->
-                {
-                    b.setIconResource(R.drawable.ic_circled_arrow_down_filled);
-                    // Toast.makeText(getContext(), "Translation from main to foreign enabled", Toast.LENGTH_SHORT).show();
-                })
-                .setOnDeactivateCallback(b ->
-                {
-                    b.setIconResource(R.drawable.ic_circled_arrow_down_empty);
-                    // Toast.makeText(getContext(), "Translation from main to foreign disabled", Toast.LENGTH_SHORT).show();
-                })
+        var modelDown = new ActivableButtonObserverModel<MaterialButton, TranslationDirection>
+                (bnArrowDown, UNIDIRECTIONAL_TO_FOREIGN.isIncludedIn(current))
+        {
+            @Override
+            public void onClick(View v)
+            {
+                viewModel.toggle(UNIDIRECTIONAL_TO_FOREIGN);
+            }
+
+            @Override
+            public void onChanged(TranslationDirection updated)
+            {
+                toggle(UNIDIRECTIONAL_TO_FOREIGN.isIncludedIn(updated));
+            }
+        };
+        modelDown
+                .setOnActivateCallback(b -> b.setIconResource(R.drawable.ic_circled_arrow_down_filled))
+                .setOnDeactivateCallback(b -> b.setIconResource(R.drawable.ic_circled_arrow_down_empty))
                 .call();
         bnArrowDown.setOnClickListener(modelDown);
         translationDirection.observe(getViewLifecycleOwner(), modelDown);
 
         MaterialButton bnArrowUp = view.findViewById(R.id.ibn_arrow_up);
-        var modelUp = new ArrowButtonModel<>(bnArrowUp,
-                TranslationDirection.UNIDIRECTIONAL_TO_MAIN,
-                viewModel,
-                TranslationDirection.UNIDIRECTIONAL_TO_MAIN.isIncludedIn(current));
-        modelUp.setOnActivateCallback(b ->
-                {
-                    b.setIconResource(R.drawable.ic_circled_arrow_up_filled);
-                    // Toast.makeText(getContext(), "Translation from foreign to main enabled", Toast.LENGTH_SHORT).show();
-                })
-                .setOnDeactivateCallback(b ->
-                {
-                    b.setIconResource(R.drawable.ic_circled_arrow_up_empty);
-                    // Toast.makeText(getContext(), "Translation from foreign to main disabled", Toast.LENGTH_SHORT).show();
-                })
+        var modelUp = new ActivableButtonObserverModel<MaterialButton, TranslationDirection>
+                (bnArrowUp, UNIDIRECTIONAL_TO_MAIN.isIncludedIn(current))
+        {
+            @Override
+            public void onClick(View v)
+            {
+                viewModel.toggle(UNIDIRECTIONAL_TO_MAIN);
+            }
+
+            @Override
+            public void onChanged(TranslationDirection updated)
+            {
+                toggle(UNIDIRECTIONAL_TO_MAIN.isIncludedIn(updated));
+            }
+        };
+        modelUp
+                .setOnActivateCallback(b -> b.setIconResource(R.drawable.ic_circled_arrow_up_filled))
+                .setOnDeactivateCallback(b -> b.setIconResource(R.drawable.ic_circled_arrow_up_empty))
                 .call();
         bnArrowUp.setOnClickListener(modelUp);
         translationDirection.observe(getViewLifecycleOwner(), modelUp);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        viewModel.refreshActiveLanguages();
     }
 }

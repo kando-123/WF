@@ -20,7 +20,7 @@ public class MockLanguagesRepository implements LanguagesRepository
     {
         languages = new TreeMap<>();
         languages.put("en", new LanguageDto("en", "English", false, false, 0));
-        languages.put("pl", new LanguageDto("pl", "Polish", false, false, 0));
+        languages.put("pl", new LanguageDto("pl", "Polish", false, true, 104857600));
         languages.put("de", new LanguageDto("de", "German", false, false, 0));
         languages.put("es", new LanguageDto("es", "Spanish", false, false, 0));
         languages.put("fr", new LanguageDto("fr", "French", true, false, 0));
@@ -35,12 +35,31 @@ public class MockLanguagesRepository implements LanguagesRepository
         languages.put("th", new LanguageDto("th", "Thai", false, false, 0));
         languages.put("id", new LanguageDto("id", "Indonesian", false, false, 0));
         languages.put("tr", new LanguageDto("tr", "Turkish", false, false, 0));
+        languages.put("pt", new LanguageDto("pt", "Portuguese", false, false, 0));
+        languages.put("nl", new LanguageDto("nl", "Dutch", false, false, 0));
+        languages.put("cs", new LanguageDto("cs", "Czech", false, false, 0));
+        languages.put("da", new LanguageDto("da", "Danish", false, false, 0));
+        languages.put("el", new LanguageDto("el", "Greek", false, false, 0));
+        languages.put("fi", new LanguageDto("fi", "Finnish", false, false, 0));
+        languages.put("he", new LanguageDto("he", "Hebrew", false, false, 0));
+        languages.put("hu", new LanguageDto("hu", "Hungarian", false, false, 0));
+        languages.put("no", new LanguageDto("no", "Norwegian", false, false, 0));
+        languages.put("sk", new LanguageDto("sk", "Slovak", false, false, 0));
+        languages.put("sv", new LanguageDto("sv", "Swedish", false, false, 0));
+        languages.put("uk", new LanguageDto("uk", "Ukrainian", false, false, 0));
+        languages.put("bg", new LanguageDto("bg", "Bulgarian", false, false, 0));
+        languages.put("hr", new LanguageDto("hr", "Croatian", false, false, 0));
+        languages.put("lt", new LanguageDto("lt", "Lithuanian", false, false, 0));
+        languages.put("ro", new LanguageDto("ro", "Romanian", false, false, 0));
+        languages.put("sr", new LanguageDto("sr", "Serbian", false, false, 0));
+        languages.put("et", new LanguageDto("et", "Estonian", false, false, 0));
+        languages.put("is", new LanguageDto("is", "Icelandic", false, false, 0));
     }
 
     @Override
     public void getAllLanguages(DataCallback<List<Language>> callback)
     {
-        callback.onSuccess(mapper.mapListToDomain(languages.values().stream().toList()));
+        callback.onSuccess(mapper.mapListToDomain(new ArrayList<>(languages.values())));
     }
 
     @Override
@@ -75,15 +94,25 @@ public class MockLanguagesRepository implements LanguagesRepository
     private final Random random = new Random();
 
     @Override
-    public void downloadLanguage(String languageCode)
+    public void downloadLanguage(String languageCode, DataCallback<Language> callback)
     {
         LanguageDto language = languages.get(languageCode);
-        if (language != null)
+        if (language == null)
+        {
+            callback.onError(new Exception("Language not found"));
+        }
+        else if (random.nextDouble() < 0.2)
+        {
+            callback.onError(new Exception("Download failed"));
+        }
+        else
         {
             language.setDownloaded(true);
 
             /* 1:200Mi [B] */
             language.setDatabaseByteSize(random.nextLong(1L, 209715200L));
+
+            callback.onSuccess(mapper.mapToDomain(language));
         }
     }
 }

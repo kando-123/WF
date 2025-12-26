@@ -33,4 +33,14 @@ public class WrapperDataCallback<T> implements DataCallback<T>
         }
         return data;
     }
+
+    public final boolean isSuccess()
+    {
+        return exception == null;
+    }
+
+    public final boolean isFailure()
+    {
+        return exception != null;
+    }
 }

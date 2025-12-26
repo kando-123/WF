@@ -13,54 +13,54 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import pl.polsl.wf.common.util.WrapperDataCallback;
 import pl.polsl.wf.data.source.TranslationDirection;
 import pl.polsl.wf.domain.model.Language;
-import pl.polsl.wf.domain.repository.LanguagesRepository;
+import pl.polsl.wf.domain.usecase.GetActiveLanguagesUseCase;
 import pl.polsl.wf.domain.usecase.GetMainLanguageUseCase;
-import pl.polsl.wf.ui.main.model.Togglable;
+
+import static pl.polsl.wf.data.source.TranslationDirection.*;
 
 @HiltViewModel
-public class MainViewModel extends ViewModel implements Togglable<TranslationDirection>
+public class MainViewModel extends ViewModel
 {
     private final MutableLiveData<String> mainLanguageName;
     private final MutableLiveData<List<String>> foreignLanguagesNames;
     private final MutableLiveData<TranslationDirection> translationDirection;
 
-    private final LanguagesRepository languagesRepo;
+    private final GetMainLanguageUseCase getMainLanguageUseCase;
+
+    private final GetActiveLanguagesUseCase getActiveLanguagesUseCase;
 
     @Inject
     public MainViewModel(GetMainLanguageUseCase getMainLanguageUseCase,
-                         LanguagesRepository languagesRepo)
+                         GetActiveLanguagesUseCase getActiveLanguagesUseCase)
     {
         mainLanguageName = new MutableLiveData<>();
         foreignLanguagesNames = new MutableLiveData<>();
-        translationDirection = new MutableLiveData<>();
-
-        this.languagesRepo = languagesRepo;
+        translationDirection = new MutableLiveData<>(UNIDIRECTIONAL_TO_FOREIGN);
+        this.getMainLanguageUseCase = getMainLanguageUseCase;
+        this.getActiveLanguagesUseCase = getActiveLanguagesUseCase;
 
         Language mainLanguage = getMainLanguageUseCase.execute();
         mainLanguageName.setValue(mainLanguage.name());
 
-        var callback = new WrapperDataCallback<List<Language>>();
-        languagesRepo.getAllLanguages(callback);
+        var wrapper = new WrapperDataCallback<List<Language>>();
+        getActiveLanguagesUseCase.execute(wrapper);
         try
         {
-            List<Language> languages = callback.get();
-            List<String> activeLanguageNames = languages.stream()
-                    .filter(language ->
-                            language.active() && !language.code().equals(mainLanguage.code()))
+            List<Language> languages = wrapper.get();
+            List<String> names = languages.stream()
+                    .filter(language -> !language.code().equals(mainLanguage.code()))
                     .map(Language::name)
                     .collect(Collectors.toList());
-            if (activeLanguageNames.isEmpty())
+            if (names.isEmpty())
             {
-                activeLanguageNames.add("[none]");
+                names.add("[none]");
             }
-            foreignLanguagesNames.setValue(activeLanguageNames);
+            foreignLanguagesNames.setValue(names);
         }
         catch (Exception e)
         {
             foreignLanguagesNames.setValue(List.of("[none]"));
         }
-
-        translationDirection.setValue(TranslationDirection.UNIDIRECTIONAL_TO_FOREIGN);
     }
 
     public LiveData<String> getMainLanguageName()
@@ -82,32 +82,59 @@ public class MainViewModel extends ViewModel implements Togglable<TranslationDir
     {
         TranslationDirection current = translationDirection.getValue();
         TranslationDirection updated = current;
-        if (toggled == TranslationDirection.UNIDIRECTIONAL_TO_FOREIGN)
+        if (toggled == UNIDIRECTIONAL_TO_FOREIGN)
         {
-            if (current == TranslationDirection.UNIDIRECTIONAL_TO_MAIN)
+            if (current == UNIDIRECTIONAL_TO_MAIN)
             {
-                updated = TranslationDirection.BIDIRECTIONAL;
+                updated = BIDIRECTIONAL;
             }
-            else if (current == TranslationDirection.BIDIRECTIONAL)
+            else if (current == BIDIRECTIONAL)
             {
-                updated = TranslationDirection.UNIDIRECTIONAL_TO_MAIN;
+                updated = UNIDIRECTIONAL_TO_MAIN;
             }
         }
-        else if (toggled == TranslationDirection.UNIDIRECTIONAL_TO_MAIN)
+        else if (toggled == UNIDIRECTIONAL_TO_MAIN)
         {
-            if (current == TranslationDirection.UNIDIRECTIONAL_TO_FOREIGN)
+            if (current == UNIDIRECTIONAL_TO_FOREIGN)
             {
-                updated = TranslationDirection.BIDIRECTIONAL;
+                updated = BIDIRECTIONAL;
             }
-            else if (current == TranslationDirection.BIDIRECTIONAL)
+            else if (current == BIDIRECTIONAL)
             {
-                updated = TranslationDirection.UNIDIRECTIONAL_TO_FOREIGN;
+                updated = UNIDIRECTIONAL_TO_FOREIGN;
             }
         }
 
         if (updated != current)
         {
             translationDirection.setValue(updated);
+        }
+    }
+
+    public void refreshActiveLanguages()
+    {
+        var wrapper = new WrapperDataCallback<List<Language>>();
+        getActiveLanguagesUseCase.execute(wrapper);
+        Language mainLanguage = getMainLanguageUseCase.execute();
+        if (mainLanguage != null)
+        {
+            try
+            {
+                List<Language> languages = wrapper.get();
+                List<String> names = languages.stream()
+                        .filter(language -> !language.code().equals(mainLanguage.code()))
+                        .map(Language::name)
+                        .collect(Collectors.toList());
+                if (names.isEmpty())
+                {
+                    names.add("[none]");
+                }
+                foreignLanguagesNames.setValue(names);
+            }
+            catch (Exception e)
+            {
+                foreignLanguagesNames.setValue(List.of("[none]"));
+            }
         }
     }
 }
