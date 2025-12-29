@@ -1,5 +1,7 @@
 package pl.polsl.wf.data.repository;
 
+import static pl.polsl.wf.data.source.TranslationDirection.*;
+
 import java.util.*;
 
 import javax.inject.Inject;
@@ -17,7 +19,11 @@ public class MockTranslationRepository implements TranslationRepository
 {
     private final Random random = new Random();
     private final TranslationMapper mapper = new TranslationMapper();
-    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+
+    private static final String VOWELS = "aeiouy";
+    private static final String CONSONANTS = "bdfgjklmnprstv";
+
+
 
     @Inject
     public MockTranslationRepository()
@@ -29,9 +35,14 @@ public class MockTranslationRepository implements TranslationRepository
     {
         StringBuilder builder = new StringBuilder();
         int length = random.nextInt(minLength, maxLength);
+        String[] collection = { VOWELS, CONSONANTS };
+        int i = random.nextInt(2);
         for (int j = 0; j < length; j++)
         {
-            builder.append(ALPHABET.charAt(random.nextInt(ALPHABET.length())));
+            var col = collection[(i++) & 1];
+            var len = col.length();
+            var idx = random.nextInt(len);
+            builder.append(col.charAt(idx));
         }
         return builder.toString();
     }
@@ -43,19 +54,17 @@ public class MockTranslationRepository implements TranslationRepository
                                 TranslationDirection direction,
                                 DataCallback<List<Translation>> callback)
     {
-        if (random.nextBoolean())
+        if (random.nextDouble() > 0.1)
         {
             List<Translation> list = new ArrayList<>();
-            if (direction == TranslationDirection.UNIDIRECTIONAL_TO_FOREIGN
-                    || direction == TranslationDirection.BIDIRECTIONAL)
+            if (UNIDIRECTIONAL_TO_FOREIGN.isIncludedIn(direction))
             {
                 for (var foreign : foreignLanguageCodes)
                 {
                     list.add(mapper.mapToDomain(mockTranslate(headword, mainLanguageCode, foreign)));
                 }
             }
-            if (direction == TranslationDirection.UNIDIRECTIONAL_TO_MAIN
-                    || direction == TranslationDirection.BIDIRECTIONAL)
+            if (UNIDIRECTIONAL_TO_MAIN.isIncludedIn(direction))
             {
                 for (var foreign : foreignLanguageCodes)
                 {
@@ -91,14 +100,14 @@ public class MockTranslationRepository implements TranslationRepository
             String definition = null;
             if (random.nextBoolean())
             {
-                definition = getRandomString(5, 20).concat(" (def.)");
+                definition = getRandomString(5, 8).concat(" (def.)");
             }
 
             List<TranslationEntryPhraseDto> phrases = new ArrayList<>();
             final int phraseCount = random.nextInt(1, 6);
             for (int j = 0; j < phraseCount; j++)
             {
-                phrases.add(new TranslationEntryPhraseDto(getRandomString(5, 20)));
+                phrases.add(new TranslationEntryPhraseDto(getRandomString(5, 8)));
             }
 
             entries.add(new TranslationEntryDto(definition, phrases));

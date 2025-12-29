@@ -19,7 +19,7 @@ public class GetActiveLanguagesUseCase
         this.languagesRepo = languagesRepo;
     }
 
-    public void execute(DataCallback<List<Language>> callback)
+    public List<Language> execute()
     {
         WrapperDataCallback<List<Language>> wrapper = new WrapperDataCallback<>();
         languagesRepo.getAllLanguages(wrapper);
@@ -27,11 +27,11 @@ public class GetActiveLanguagesUseCase
         {
             List<Language> languages = wrapper.get();
             languages.removeIf(language -> !language.active());
-            callback.onSuccess(languages);
+            return languages;
         }
         catch (Exception exc)
         {
-            callback.onError(exc);
+            return null;
         }
     }
 }

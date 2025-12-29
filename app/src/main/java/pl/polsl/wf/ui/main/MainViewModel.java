@@ -1,18 +1,18 @@
 package pl.polsl.wf.ui.main;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import pl.polsl.wf.common.util.WrapperDataCallback;
 import pl.polsl.wf.data.source.TranslationDirection;
 import pl.polsl.wf.domain.model.Language;
+import pl.polsl.wf.domain.model.Translation;
 import pl.polsl.wf.domain.usecase.GetActiveLanguagesUseCase;
 import pl.polsl.wf.domain.usecase.GetMainLanguageUseCase;
 
@@ -21,64 +21,54 @@ import static pl.polsl.wf.data.source.TranslationDirection.*;
 @HiltViewModel
 public class MainViewModel extends ViewModel
 {
-    private final MutableLiveData<String> mainLanguageName;
-    private final MutableLiveData<List<String>> foreignLanguagesNames;
+    private final MutableLiveData<Language> mainLanguage;
+    private final MutableLiveData<List<Language>> foreignLanguages;
     private final MutableLiveData<TranslationDirection> translationDirection;
+    private final MutableLiveData<String> translationText;
 
     private final GetMainLanguageUseCase getMainLanguageUseCase;
-
     private final GetActiveLanguagesUseCase getActiveLanguagesUseCase;
 
     @Inject
     public MainViewModel(GetMainLanguageUseCase getMainLanguageUseCase,
                          GetActiveLanguagesUseCase getActiveLanguagesUseCase)
     {
-        mainLanguageName = new MutableLiveData<>();
-        foreignLanguagesNames = new MutableLiveData<>();
+        mainLanguage = new MutableLiveData<>();
+        foreignLanguages = new MutableLiveData<>();
         translationDirection = new MutableLiveData<>(UNIDIRECTIONAL_TO_FOREIGN);
+        translationText = new MutableLiveData<>();
+
         this.getMainLanguageUseCase = getMainLanguageUseCase;
         this.getActiveLanguagesUseCase = getActiveLanguagesUseCase;
 
-        Language mainLanguage = getMainLanguageUseCase.execute();
-        mainLanguageName.setValue(mainLanguage.name());
-
-        var wrapper = new WrapperDataCallback<List<Language>>();
-        getActiveLanguagesUseCase.execute(wrapper);
-        try
-        {
-            List<Language> languages = wrapper.get();
-            List<String> names = languages.stream()
-                    .filter(language -> !language.code().equals(mainLanguage.code()))
-                    .map(Language::name)
-                    .collect(Collectors.toList());
-            if (names.isEmpty())
-            {
-                names.add("[none]");
-            }
-            foreignLanguagesNames.setValue(names);
-        }
-        catch (Exception e)
-        {
-            foreignLanguagesNames.setValue(List.of("[none]"));
-        }
+        refreshLanguages();
     }
 
-    public LiveData<String> getMainLanguageName()
+    @NonNull
+    public LiveData<Language> getMainLanguage()
     {
-        return mainLanguageName;
+        return mainLanguage;
     }
 
-    public LiveData<List<String>> getForeignLanguagesNames()
+    @NonNull
+    public LiveData<List<Language>> getForeignLanguages()
     {
-        return foreignLanguagesNames;
+        return foreignLanguages;
     }
 
+    @NonNull
     public LiveData<TranslationDirection> getTranslationDirection()
     {
         return translationDirection;
     }
 
-    public void toggle(TranslationDirection toggled)
+    @NonNull
+    public LiveData<String> getTranslationText()
+    {
+        return translationText;
+    }
+
+    void toggle(TranslationDirection toggled)
     {
         TranslationDirection current = translationDirection.getValue();
         TranslationDirection updated = current;
@@ -111,30 +101,19 @@ public class MainViewModel extends ViewModel
         }
     }
 
-    public void refreshActiveLanguages()
+    void refreshLanguages()
     {
-        var wrapper = new WrapperDataCallback<List<Language>>();
-        getActiveLanguagesUseCase.execute(wrapper);
-        Language mainLanguage = getMainLanguageUseCase.execute();
-        if (mainLanguage != null)
-        {
-            try
-            {
-                List<Language> languages = wrapper.get();
-                List<String> names = languages.stream()
-                        .filter(language -> !language.code().equals(mainLanguage.code()))
-                        .map(Language::name)
-                        .collect(Collectors.toList());
-                if (names.isEmpty())
-                {
-                    names.add("[none]");
-                }
-                foreignLanguagesNames.setValue(names);
-            }
-            catch (Exception e)
-            {
-                foreignLanguagesNames.setValue(List.of("[none]"));
-            }
-        }
+        Language main = getMainLanguageUseCase.execute();
+        mainLanguage.setValue(main);
+
+        List<Language> activeLanguages = getActiveLanguagesUseCase.execute();
+        foreignLanguages.setValue(activeLanguages != null
+                ? activeLanguages
+                : Collections.emptyList());
+    }
+
+    void triggerTranslation(String text)
+    {
+        translationText.setValue(text);
     }
 }

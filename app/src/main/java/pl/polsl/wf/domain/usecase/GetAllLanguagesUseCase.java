@@ -20,7 +20,7 @@ public class GetAllLanguagesUseCase
         this.languagesRepo = languagesRepo;
     }
 
-    public void execute(DataCallback<List<Language>> callback)
+    public List<Language> execute()
     {
         WrapperDataCallback<List<Language>> wrapper = new WrapperDataCallback<>();
         languagesRepo.getAllLanguages(wrapper);
@@ -43,11 +43,11 @@ public class GetAllLanguagesUseCase
                 }
             };
             list.sort(comparator);
-            callback.onSuccess(list);
+            return list;
         }
         catch (Exception exc)
         {
-            callback.onError(exc);
+            return null;
         }
     }
 }
