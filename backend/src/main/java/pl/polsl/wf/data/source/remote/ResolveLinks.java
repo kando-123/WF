@@ -10,12 +10,12 @@ import pl.polsl.wf.data.model.TranslationEntryPhraseDto;
 class ResolveLinks {
     Pattern simple_links_regex;
     Pattern alter_links_regex;
-    Pattern any_link_regex;
+    RegexTokenizer regexTokenizer;
 
     public ResolveLinks() {
         simple_links_regex = Pattern.compile("\\[\\[([^\\|]+?)\\]\\]");
         alter_links_regex = Pattern.compile("\\[\\[([^\\|]+?)\\|([^\\|]+?)\\]\\]");
-        any_link_regex = Pattern.compile("\\[\\[([\\w\\W]+?)\\]\\]");
+        regexTokenizer = new RegexTokenizer("\\[\\[([\\w\\W]+?)\\]\\]");
     }
 
     private TranslationEntryPhraseDto processLink(String link) {
@@ -34,28 +34,22 @@ class ResolveLinks {
         return res;
     }
 
+
     public List<TranslationEntryPhraseDto> process(String input) {
+
         List<TranslationEntryPhraseDto> res = new ArrayList<>();
-        int start = 0;
-        while (true) {
-            int end = input.indexOf("[[", start);
 
-            if (end == -1) {
-                String substr = input.substring(start, input.length());
-                if (!substr.isBlank())
-                    res.add(new TranslationEntryPhraseDto(substr));
-                break;
-            } else {
-                String substr = input.substring(start, end);
-                if (!substr.isBlank())
-                    res.add(new TranslationEntryPhraseDto(substr));
-                Matcher m = any_link_regex.matcher(input);
-                m.find(end);
-                res.add(processLink(m.group()));
-                start = m.end();
-            }
+        List<String> tokens = new ArrayList<>();
+        List<Boolean> matches = new ArrayList<>();
+
+        regexTokenizer.tokenize(input, tokens, matches);
+        for (int i=0; i<tokens.size(); i++)
+        {
+            if (matches.get(i))
+                res.add(processLink(tokens.get(i)));
+            else if (!tokens.get(i).isBlank())
+                res.add(new TranslationEntryPhraseDto(tokens.get(i)));
         }
-
         return res;
     }
 }
