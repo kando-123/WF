@@ -27,7 +27,7 @@ public class TranslationEntryPhraseDto
 //            @Nonnull
             String text)
     {
-        this(text, text);
+        this(text, null);
     }
 
     public String getText()

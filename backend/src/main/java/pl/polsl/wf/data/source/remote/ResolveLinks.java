@@ -41,10 +41,14 @@ class ResolveLinks {
             int end = input.indexOf("[[", start);
 
             if (end == -1) {
-                res.add(new TranslationEntryPhraseDto(input.substring(start, input.length())));
+                String substr = input.substring(start, input.length());
+                if (!substr.isBlank())
+                    res.add(new TranslationEntryPhraseDto(substr));
                 break;
             } else {
-                res.add(new TranslationEntryPhraseDto(input.substring(start, end)));
+                String substr = input.substring(start, end);
+                if (!substr.isBlank())
+                    res.add(new TranslationEntryPhraseDto(substr));
                 Matcher m = any_link_regex.matcher(input);
                 m.find(end);
                 res.add(processLink(m.group()));
