@@ -1,5 +1,10 @@
 package pl.polsl.wf.data.source.remote;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import pl.polsl.wf.data.source.remote.MarkdownHeader;
 
 class MarkdownChunk {
@@ -25,4 +30,18 @@ class MarkdownChunk {
         contents = markdown.subSequence(resStart, resEnd);
     }
 
+    public List<String> getTranslations()
+    {
+        Pattern pattern = Pattern.compile("^\\s*#+\\s+(.+)");
+        List<String> res = new ArrayList<>();
+        for (String line: contents.toString().split("\n"))
+        {
+            Matcher m = pattern.matcher(line);
+            if (m.matches())
+            {
+                res.add(m.group(1));
+            }
+        }
+        return  res;
+    }
 }
