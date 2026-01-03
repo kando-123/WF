@@ -18,6 +18,16 @@ public class RemoteSource {
     RemoveHTML removeHTML;
     ResolveTemplates resolveTemplates;
 
+    private static final List<String> allAttributes = List.of(
+            "Number", "Phonogram", "Gerund", "Adverb", "Determiner", "Compound part",
+            "Suffix", "Ideophone", "Prepositional phrase", "Affixations", "Preposition",
+            "Classifier", "Relative", "Punctuation mark", "Conjunction", "Article",
+            "Letter", "Numeral", "Affix", "Noun", "Verb", "Pronoun", "Contraction", "Inflection",
+            "Phrase", "Proper noun", "Postposition", "Adjective", "Prefix", "Syllable", "Particle",
+            "Participle", "Stem set", "Counter", "Adnominal", "Symbol", "Interjection"
+    );
+
+
     public RemoteSource()
     {
         removeHTML = new RemoveHTML();
@@ -45,9 +55,12 @@ public class RemoteSource {
     public List<TranslationDto> getTranslationsToForeign(
             String headword,
             List<String> foreigns
-    )
+    ) throws Exception
     {
-
+        String markdown = getMarkdownForHeadword(headword);
+        // all translation blocks are either english or multilingual
+        // we can include both
+        // there might be multiple blocks for multiple etymologies.
         throw new UnsupportedOperationException();
 
 //        return res;
@@ -83,40 +96,21 @@ public class RemoteSource {
         String markdown = getMarkdownForHeadword(headword);
         markdown = removeComments.process(markdown);
 
-        int langHeaderStart = 0;
-        for (String language: foreigns)
+        MarkdownHeader langHeader = MarkdownHeader.headerWithAnyKeyword(foreigns, 0, markdown);
+        while (langHeader.next())
         {
-            MarkdownHeader langHeader = new MarkdownHeader(2, langHeaderStart, language, markdown);
-            if (langHeader.resStart == -1)
-                continue;
             MarkdownChunk langChunk = new MarkdownChunk(langHeader, markdown);
-            for (String attribute : TranslationDto.getAllAttributes())
+            MarkdownHeader attrHeader =
+                    MarkdownHeader.headerWithAnyKeyword(allAttributes, 0, langChunk.contents);
+            while(attrHeader.next())
             {
-                MarkdownHeader attrHeader = new MarkdownHeader(3, 0, attribute,langChunk.contents);
-                List<TranslationEntryDto> translationEntryDtos = new ArrayList<>();
-                if (attrHeader.resStart != -1)
-                    translationEntryDtos = translationsFromChunk(attrHeader, langChunk);
-
-                ///  level 4 headers come from words with several etymologies. we need to get them all
-
-                int start = 0;
-                while (true)
-                {
-                    attrHeader = new MarkdownHeader(4, start, attribute, langChunk.contents);
-                    if (attrHeader.resEnd == -1)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        translationEntryDtos.addAll(translationsFromChunk(attrHeader, langChunk));
-                        start = attrHeader.resEnd;
-                    }
-                }
-
-                if (translationEntryDtos.size()!=0)
-                    res.add(new TranslationDto(headword, List.of(attribute), language,
-                            "English", translationEntryDtos ));
+                res.add(new TranslationDto(
+                        headword,
+                        List.of(attrHeader.getHeadword()),
+                        langHeader.getHeadword(),
+                        "English",
+                        translationsFromChunk(attrHeader, langChunk)
+                ));
             }
         }
 

@@ -1,61 +1,76 @@
 package pl.polsl.wf.data.source.remote;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Implementation of ITranslationDataSource interface for online data source. It communicates
- * with Wiktionary and parses the responses.s
- */
+class MarkdownHeader {
+    
+    public int getLevel() {
+        return level;
+    }
 
-class MarkdownHeader
-{
-    public final int level;
-    public final int resStart;
-    /// position AFTER the markdown ends
-    public final int resEnd;
-    public final String headword;
+    public int getResStart() {
+        return resStart;
+    }
 
-    private MarkdownHeader(String regex, int level, int startPos, CharSequence markdown)
-    {
-        this.level = level;
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(markdown);
+    public int getResEnd() {
+        return resEnd;
+    }
 
-        if (!matcher.find(startPos))
-        {
-            resStart = -1;
-            resEnd = -1;
-            headword = "";
+    public String getHeadword() {
+        return headword;
+    }
+
+    private int level;
+    private int resStart;
+    private int resEnd;
+    private String headword;
+    private Matcher matcher;
+
+    public boolean next() {
+        boolean res = matcher.find();
+        if (res) {
+            resStart = matcher.start();
+            resEnd = matcher.end();
+            headword = matcher.group(3);
+            level = matcher.group(2).length();
         }
-        else
-        {
-            // if the first symbol was ^, the result starts at 0
-            // else remove the additional character
-            resStart = matcher.start() + matcher.group(1).length();
-            // if the last symbol was $, remove nothing
-            // else remove the additional character
-            resEnd = matcher.end() - matcher.group(3).length();
-            headword = matcher.group(2);
-        }
-    }
-    //first boolean is a dummy, so that the constructors differ.
-    //techincally the one with set number should be removed
-    public MarkdownHeader(boolean lessOrEqual, int level, int startPos,  CharSequence markdown)
-    {
-        this("(^|\\n)={1,"+level+"} ?([^=]+?) ?={1,"+level+"}($|\\n)", level, startPos, markdown);
+        return res;
     }
 
-    public MarkdownHeader(int level, int startPos, String headword, CharSequence markdown)
-    {
-        this("(^|\\n)={"+level+"} ?("+headword+") ?={"+level+"}($|\\n)", level, startPos, markdown);
+    private MarkdownHeader(String regex, int start, CharSequence markdown) {
+        matcher = Pattern.compile(regex).matcher(markdown);
+        matcher.region(start, markdown.length());
     }
-    public MarkdownHeader(int level, int startPos, CharSequence markdown)
-    {
-        this("(^|\\n)={"+level+"} ?([^=]+?) ?={"+level+"}($|\\n)", level, startPos, markdown);
+
+    public static MarkdownHeader anyHeader(int start, CharSequence markdown) {
+        MarkdownHeader res = new MarkdownHeader(
+                "(^|[^=])(==+) ?([^=]+?) ?==+($|\\n)",
+                start, markdown
+        );
+
+        return res;
     }
-    public MarkdownHeader(int startPos, CharSequence markdown)
-    {
-        this("(^|\\n)=+ ?([^=]+?) ?=+($|\\n)", -1, startPos, markdown);
+
+    public static MarkdownHeader anyHeaderLessOrEqual(int level, int start, CharSequence markdown) {
+
+        MarkdownHeader res = new MarkdownHeader(
+                "(^|\\n)(={1," + level + "}) ?([^=]+?) ?={1," + level + "}($|\\n)",
+                start, markdown
+        );
+
+        return res;
     }
+
+
+    public static MarkdownHeader headerWithAnyKeyword(List<String> keywords, int start, CharSequence markdown) {
+        MarkdownHeader res = new MarkdownHeader(
+                "(^|[^=])(==+) ?(" + String.join("|", keywords) + ") ?==+($|\\n)",
+                start, markdown
+        );
+
+        return res;
+    }
+
 }

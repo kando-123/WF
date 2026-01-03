@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 import pl.polsl.wf.data.source.remote.MarkdownHeader;
 
 class MarkdownChunk {
-    public final int level;
     public final int resStart;
     /// position AFTER the markdown ends
     public final int resEnd;
@@ -16,16 +15,16 @@ class MarkdownChunk {
     public final CharSequence contents;
 
     public MarkdownChunk(MarkdownHeader header, CharSequence markdown) {
-        level = header.level;
-        resStart = header.resEnd;
-        headword = header.headword;
+        resStart = header.getResEnd();
+        headword = header.getHeadword();
 
-        MarkdownHeader nextHeader = new MarkdownHeader(true, level, header.resEnd, markdown);
-        if (nextHeader.resStart == -1) //end of input
+        MarkdownHeader nextHeader =
+                MarkdownHeader.anyHeaderLessOrEqual(header.getLevel(), header.getResEnd(), markdown);
+        if (nextHeader.next()) //there's another header
         {
-            resEnd = markdown.length();
+            resEnd = nextHeader.getResStart();
         } else {
-            resEnd = nextHeader.resStart;
+            resEnd = markdown.length();
         }
         contents = markdown.subSequence(resStart, resEnd);
     }
@@ -34,7 +33,6 @@ class MarkdownChunk {
 
 class LeafMarkdownChunk
 {
-    public final int level;
     public final int resStart;
     /// position AFTER the markdown ends
     public final int resEnd;
@@ -43,16 +41,14 @@ class LeafMarkdownChunk
 
 
     public LeafMarkdownChunk(MarkdownHeader header, CharSequence markdown) {
-        level = header.level;
-        resStart = header.resEnd;
-        headword = header.headword;
+        resStart = header.getResEnd();
+        headword = header.getHeadword();
 
-        MarkdownHeader nextHeader = new MarkdownHeader(header.resEnd, markdown);
-        if (nextHeader.resStart == -1) //end of input
-        {
+        MarkdownHeader nextHeader = MarkdownHeader.anyHeader(header.getResEnd(), markdown);
+        if (nextHeader.next()) {
+            resEnd = nextHeader.getResStart();
+        } else {//end of input
             resEnd = markdown.length();
-        } else {
-            resEnd = nextHeader.resStart;
         }
         contents = markdown.subSequence(resStart, resEnd);
     }

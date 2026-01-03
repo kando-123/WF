@@ -13,14 +13,6 @@ public class TranslationDto
     private final String targetLanguageCode;
     private final List<TranslationEntryDto> entries;
 
-    private static final List<String> allAttributes = List.of(
-            "Number", "Phonogram", "Gerund", "Adverb", "Determiner", "Compound part",
-            "Suffix", "Ideophone", "Prepositional phrase", "Affixations", "Preposition",
-            "Classifier", "Relative", "Punctuation mark", "Conjunction", "Article",
-            "Letter", "Numeral", "Affix", "Noun", "Verb", "Pronoun", "Contraction", "Inflection",
-            "Phrase", "Proper noun", "Postposition", "Adjective", "Prefix", "Syllable", "Particle",
-            "Participle", "Stem set", "Counter", "Adnominal", "Symbol", "Interjection"
-    );
 
     public TranslationDto(String headword,
                           List<String> attributes,
@@ -59,5 +51,4 @@ public class TranslationDto
     {
         return new ArrayList<>(entries);
     }
-    public static List<String> getAllAttributes(){return allAttributes;}
 }
