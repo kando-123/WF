@@ -43,15 +43,19 @@ class MarkdownHeader
     //techincally the one with set number should be removed
     public MarkdownHeader(boolean lessOrEqual, int level, int startPos,  CharSequence markdown)
     {
-        this("(^|[^=])={1,"+level+"} ?([^=]+?) ?={1,"+level+"}($|[^=])", level, startPos, markdown);
+        this("(^|\\n)={1,"+level+"} ?([^=]+?) ?={1,"+level+"}($|\\n)", level, startPos, markdown);
     }
 
     public MarkdownHeader(int level, int startPos, String headword, CharSequence markdown)
     {
-        this("(^|[^=])={"+level+"} ?("+headword+") ?={"+level+"}($|[^=])", level, startPos, markdown);
+        this("(^|\\n)={"+level+"} ?("+headword+") ?={"+level+"}($|\\n)", level, startPos, markdown);
     }
     public MarkdownHeader(int level, int startPos, CharSequence markdown)
     {
-        this("(^|[^=])={"+level+"} ?([^=]+?) ?={"+level+"}($|[^=])", level, startPos, markdown);
+        this("(^|\\n)={"+level+"} ?([^=]+?) ?={"+level+"}($|\\n)", level, startPos, markdown);
+    }
+    public MarkdownHeader(int startPos, CharSequence markdown)
+    {
+        this("(^|\\n)=+ ?([^=]+?) ?=+($|\\n)", -1, startPos, markdown);
     }
 }

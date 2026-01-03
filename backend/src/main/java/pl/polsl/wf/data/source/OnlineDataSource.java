@@ -1,5 +1,6 @@
 package pl.polsl.wf.data.source;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
@@ -23,27 +24,31 @@ public class OnlineDataSource implements TranslationDataSource
             DataCallback<List<TranslationDto>> callback
     )
     {
+        try {
+            List<TranslationDto> res;
 
-        switch (direction)
+            switch (direction) {
+                case UNIDIRECTIONAL_TO_MAIN -> {
+                    res = source.getTranslationsToEnglish(headword, foreignLanguageCodes);
+                }
+                case UNIDIRECTIONAL_TO_FOREIGN -> {
+                    res = source.getTranslationsToForeign(headword, foreignLanguageCodes);
+                }
+                case BIDIRECTIONAL -> {
+                    res = source.getTranslationsToForeign(headword, foreignLanguageCodes);
+                    res.addAll(
+                            source.getTranslationsToEnglish(headword, foreignLanguageCodes)
+                    );
+                }
+                default -> {
+                    res = new ArrayList<>();
+                }
+            }
+            callback.onSuccess(res);
+        }
+        catch (Exception e)
         {
-            case UNIDIRECTIONAL_TO_MAIN -> {
-                callback.onSuccess(
-                        source.getTranslationsToEnglish(headword,  foreignLanguageCodes)
-                );
-            }
-            case UNIDIRECTIONAL_TO_FOREIGN -> {
-                callback.onSuccess(
-                        source.getTranslationsToForeign(headword,  foreignLanguageCodes)
-                );
-            }
-            case BIDIRECTIONAL -> {
-                List<TranslationDto> res =
-                    source.getTranslationsToForeign(headword,  foreignLanguageCodes);
-                res.addAll(
-                    source.getTranslationsToEnglish(headword,  foreignLanguageCodes)
-                );
-                callback.onSuccess(res);
-            }
+            callback.onError(e);
         }
     }
 

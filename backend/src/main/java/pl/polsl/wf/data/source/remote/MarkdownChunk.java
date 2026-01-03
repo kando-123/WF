@@ -30,6 +30,32 @@ class MarkdownChunk {
         contents = markdown.subSequence(resStart, resEnd);
     }
 
+}
+
+class LeafMarkdownChunk
+{
+    public final int level;
+    public final int resStart;
+    /// position AFTER the markdown ends
+    public final int resEnd;
+    public final String headword;
+    public final CharSequence contents;
+
+
+    public LeafMarkdownChunk(MarkdownHeader header, CharSequence markdown) {
+        level = header.level;
+        resStart = header.resEnd;
+        headword = header.headword;
+
+        MarkdownHeader nextHeader = new MarkdownHeader(header.resEnd, markdown);
+        if (nextHeader.resStart == -1) //end of input
+        {
+            resEnd = markdown.length();
+        } else {
+            resEnd = nextHeader.resStart;
+        }
+        contents = markdown.subSequence(resStart, resEnd);
+    }
     public List<String> getTranslations()
     {
         Pattern pattern = Pattern.compile("^\\s*#+\\s+(.+)");

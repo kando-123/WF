@@ -25,29 +25,21 @@ public class RemoteSource {
         removeComments = new RemoveComments();
         resolveTemplates = new ResolveTemplates();
     }
-    private String getMarkdownForHeadword(String headword)
+    private String getMarkdownForHeadword(String headword) throws Exception
     {
-        String res = "";
-        System.out.println("hjello world");
-        try {
-            URI uri = new URI("https://en.wiktionary.org/w/index.php?title="+headword+"&action=raw");
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(uri)
-                    .header("User-Agent", "WiktionaryFiltering/0.0 (tichalik@gmail.com)")
-                    .GET()
-                    .build();
-            HttpResponse<String> response = HttpClient.newBuilder()
-                    .build()
-                    .send(request, HttpResponse.BodyHandlers.ofString());
+        URI uri = new URI("https://en.wiktionary.org/w/index.php?title="
+                +headword.replace(" ", "_")
+                +"&action=raw");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .header("User-Agent", "WiktionaryFiltering/0.0 (tichalik@gmail.com)")
+                .GET()
+                .build();
+        HttpResponse<String> response = HttpClient.newBuilder()
+                .build()
+                .send(request, HttpResponse.BodyHandlers.ofString());
 
-            res  = response.body();
-        }
-        catch(Exception e)
-        {
-            System.out.println("u fucked up:/");
-        }
-
-        return res;
+        return response.body();
     }
 
     public List<TranslationDto> getTranslationsToForeign(
@@ -61,9 +53,9 @@ public class RemoteSource {
 //        return res;
     }
 
-    private List<TranslationEntryDto> translationsFromChunk(MarkdownHeader attrHeader, MarkdownChunk langChunk )
+    private List<TranslationEntryDto> translationsFromChunk(MarkdownHeader attrHeader, MarkdownChunk langChunk ) throws Exception
     {
-        MarkdownChunk attrChunk = new MarkdownChunk(attrHeader, langChunk.contents);
+        LeafMarkdownChunk attrChunk = new LeafMarkdownChunk(attrHeader, langChunk.contents);
         List<TranslationEntryDto> translationEntryDtos = new ArrayList<>();
 
         for (String translation: attrChunk.getTranslations())
@@ -84,7 +76,7 @@ public class RemoteSource {
     public List<TranslationDto> getTranslationsToEnglish(
             String headword,
             List<String> foreigns
-    )
+    ) throws Exception
     {
         List<TranslationDto> res = new ArrayList<>();
 
@@ -95,11 +87,15 @@ public class RemoteSource {
         for (String language: foreigns)
         {
             MarkdownHeader langHeader = new MarkdownHeader(2, langHeaderStart, language, markdown);
+            if (langHeader.resStart == -1)
+                continue;
             MarkdownChunk langChunk = new MarkdownChunk(langHeader, markdown);
             for (String attribute : TranslationDto.getAllAttributes())
             {
                 MarkdownHeader attrHeader = new MarkdownHeader(3, 0, attribute,langChunk.contents);
-                List<TranslationEntryDto> translationEntryDtos = translationsFromChunk(attrHeader, langChunk);
+                List<TranslationEntryDto> translationEntryDtos = new ArrayList<>();
+                if (attrHeader.resStart != -1)
+                    translationEntryDtos = translationsFromChunk(attrHeader, langChunk);
 
                 ///  level 4 headers come from words with several etymologies. we need to get them all
 
@@ -118,8 +114,9 @@ public class RemoteSource {
                     }
                 }
 
-                res.add(new TranslationDto(headword, List.of(attribute), language,
-                        "English", translationEntryDtos ));
+                if (translationEntryDtos.size()!=0)
+                    res.add(new TranslationDto(headword, List.of(attribute), language,
+                            "English", translationEntryDtos ));
             }
         }
 
