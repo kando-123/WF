@@ -6,6 +6,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pl.polsl.wf.data.model.TranslationDto;
 import pl.polsl.wf.data.model.TranslationEntryDto;
@@ -13,10 +15,14 @@ import pl.polsl.wf.data.model.TranslationEntryPhraseDto;
 
 public class RemoteSource {
 
-    RemoveComments removeComments;
-    ResolveLinks resolveLinks;
-    RemoveHTML removeHTML;
-    ResolveTemplates resolveTemplates;
+    private RemoveComments removeComments;
+    private ResolveLinks resolveLinks;
+    private RemoveHTML removeHTML;
+    private ResolveTemplates resolveTemplates;
+    private Pattern translationsToForeignRegex;
+    private Pattern transliterationRegex;
+    private  Pattern translationChunkRegex;
+
 
     private static final List<String> allAttributes = List.of(
             "Number", "Phonogram", "Gerund", "Adverb", "Determiner", "Compound part",
@@ -34,6 +40,11 @@ public class RemoteSource {
         resolveLinks = new ResolveLinks();
         removeComments = new RemoveComments();
         resolveTemplates = new ResolveTemplates();
+        translationsToForeignRegex  = Pattern.compile("\\{\\{tt?\\+?\\|.+?\\|(.+?)\\}\\}");
+        transliterationRegex = Pattern.compile("tr=(.+?)(\\}\\}|\\||$)");
+        translationChunkRegex =
+                Pattern.compile("\\{\\{trans-top\\|([\\w\\W]+?)\\}\\}([\\w\\W]+?)\\{\\{trans-bottom\\}\\}");
+
     }
     private String getMarkdownForHeadword(String headword) throws Exception
     {
@@ -51,19 +62,63 @@ public class RemoteSource {
 
         return response.body();
     }
-
+    private List<TranslationEntryPhraseDto> extractTranslationsToForeign(CharSequence input)
+    {
+        Matcher m = translationsToForeignRegex.matcher(input);
+        List<TranslationEntryPhraseDto> res = new ArrayList<>();
+        while (m.find())
+        {
+            res.add(new TranslationEntryPhraseDto(
+                    transliterationRegex.matcher(m.group(1)).replaceAll("($1)").replace("|"," ")
+            ));
+        }
+        return res;
+    }
     public List<TranslationDto> getTranslationsToForeign(
             String headword,
             List<String> foreigns
     ) throws Exception
     {
-        String markdown = getMarkdownForHeadword(headword);
-        // all translation blocks are either english or multilingual
-        // we can include both
-        // there might be multiple blocks for multiple etymologies.
-        throw new UnsupportedOperationException();
 
-//        return res;
+        List<TranslationDto> res = new ArrayList<>();
+
+        String markdown = getMarkdownForHeadword(headword);
+        markdown = removeComments.process(markdown);
+
+        MarkdownHeader langHeader = MarkdownHeader.headerWithAnyKeyword(List.of("English"), 0, markdown);
+        if (langHeader.next())
+        {
+            Pattern singleTranslationRegex =
+                    Pattern.compile("\\n\\*:? ("+String.join("|", foreigns)+")(.+)");
+
+
+            MarkdownChunk langChunk = new MarkdownChunk(langHeader, markdown);
+            MarkdownHeader attrHeader =
+                    MarkdownHeader.headerWithAnyKeyword(allAttributes, 0, langChunk.contents);
+            while(attrHeader.next())
+            {
+                MarkdownChunk attrChunk = new MarkdownChunk(attrHeader, langChunk.contents);
+                Matcher translationsChunk = translationChunkRegex.matcher(attrChunk.contents);
+                while (translationsChunk.find())
+                {
+                    Matcher singleTranslationMatcher = singleTranslationRegex.matcher(translationsChunk.group());
+                    while(singleTranslationMatcher.find())
+                    {
+                        res.add(new TranslationDto(
+                                headword,
+                                List.of(attrHeader.getHeadword()),
+                                "English",
+                                 singleTranslationMatcher.group(1),
+                                List.of(new TranslationEntryDto(
+                                        translationsChunk.group(1),
+                                        extractTranslationsToForeign(singleTranslationMatcher.group(2))))
+                        ));
+                    }
+                }
+            }
+        }
+
+        return res;
     }
 
     private List<TranslationEntryDto> translationsFromChunk(MarkdownHeader attrHeader, MarkdownChunk langChunk ) throws Exception
