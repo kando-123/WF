@@ -14,8 +14,6 @@ public class TranslationEntryDto
     /**
      * Definition of the headword being translated, specifying what meaning the phrases correspond.
      */
-// @kamil
-//    @Nullable
     private final String definition;
 
     /**
@@ -23,13 +21,8 @@ public class TranslationEntryDto
      */
     private final List<TranslationEntryPhraseDto> phrases;
 
-    public TranslationEntryDto(
-// @kamil
-//            @Nullable
-            String definition,
-// @kamil
-//                               @Nonnull
-            List<TranslationEntryPhraseDto> phrases)
+    public TranslationEntryDto(String definition,
+                               List<TranslationEntryPhraseDto> phrases)
     {
         this.definition = definition;
         this.phrases = new ArrayList<>(phrases);

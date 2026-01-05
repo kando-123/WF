@@ -35,7 +35,7 @@ public class LanguagesRepositoryImpl implements LanguagesRepository
     }
 
     @Override
-    public void downloadLanguage(String languageCode)
+    public void downloadLanguage(String languageCode, DataCallback<Language> callback)
     {
         throw new UnsupportedOperationException("Not implemented yet.");
     }

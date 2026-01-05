@@ -1,8 +1,5 @@
 package pl.polsl.wf.domain.model;
 
-// @kamil
-//import androidx.annotation.NonNull;
-
 /**
  * Class representing a language.
  * <p>
@@ -16,17 +13,12 @@ public record Language(String name,
                        boolean downloaded)
         implements Comparable<Language>
 {
-    public int compareByNameTo(
-// @kamil
-//            @NonNull
-            Language that)
+    public int compareByNameTo(Language that)
     {
         return this.name.compareToIgnoreCase(that.name);
     }
 
-    public int compareByCodeTo(
-//            @NonNull
-            Language that)
+    public int compareByCodeTo(Language that)
     {
         return this.code.compareToIgnoreCase(that.code);
     }

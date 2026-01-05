@@ -1,34 +1,34 @@
 package pl.polsl.wf.domain.usecase;
 
+import static pl.polsl.wf.common.util.Constants.MAIN_LANGUAGE_CODE;
+
 import javax.inject.Inject;
 
-import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.common.util.WrapperDataCallback;
 import pl.polsl.wf.domain.model.Language;
 import pl.polsl.wf.domain.repository.LanguagesRepository;
 
-public class ToggleLanguageUseCase
+public class GetMainLanguageUseCase
 {
     private final LanguagesRepository languagesRepo;
 
     @Inject
-    public ToggleLanguageUseCase(LanguagesRepository languagesRepo)
+    public GetMainLanguageUseCase(LanguagesRepository languagesRepo)
     {
         this.languagesRepo = languagesRepo;
     }
 
-    public void execute(String languageCode, DataCallback<Language> callback)
+    public Language execute()
     {
         var wrapper = new WrapperDataCallback<Language>();
-        languagesRepo.getLanguageByCode(languageCode, wrapper);
+        languagesRepo.getLanguageByCode(MAIN_LANGUAGE_CODE, wrapper);
         try
         {
-            Language language = wrapper.get();
-            languagesRepo.setLanguageActive(languageCode, !language.active(), callback);
+            return wrapper.get();
         }
         catch (Exception e)
         {
-            callback.onError(e);
+            return null;
         }
     }
 }

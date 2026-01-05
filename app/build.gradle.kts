@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.benchmark.common)
     implementation(libs.room.common.jvm)
+    implementation(libs.annotations)
+    implementation(libs.annotations)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -53,4 +55,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.57.2")
     annotationProcessor("com.google.dagger:hilt-compiler:2.57.2")
     implementation("javax.inject:javax.inject:1")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-runtime:2.10.0")
 }
