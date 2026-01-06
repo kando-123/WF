@@ -4,7 +4,6 @@ import static pl.polsl.wf.data.source.TranslationDirection.UNIDIRECTIONAL_TO_FOR
 import static pl.polsl.wf.data.source.TranslationDirection.UNIDIRECTIONAL_TO_MAIN;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ import pl.polsl.wf.domain.model.Language;
 @AndroidEntryPoint
 public class MainFragment extends Fragment
 {
-    private MainViewModel viewModel;
+    private MainViewModel mainViewModel;
 
     @Nullable
     @Override
@@ -50,15 +49,15 @@ public class MainFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         TextView tvMainLanguage = view.findViewById(R.id.tv_main_language);
-        LiveData<Language> mainLanguage = viewModel.getMainLanguage();
+        LiveData<Language> mainLanguage = mainViewModel.getMainLanguage();
         mainLanguage.observe(getViewLifecycleOwner(),
                 language -> tvMainLanguage.setText(language.name()));
 
         TextView tvForeignLanguages = view.findViewById(R.id.tv_foreign_languages);
-        LiveData<List<Language>> foreignLanguagesNames = viewModel.getForeignLanguages();
+        LiveData<List<Language>> foreignLanguagesNames = mainViewModel.getForeignLanguages();
         foreignLanguagesNames.observe(getViewLifecycleOwner(), new Observer<List<Language>>()
         {
             @Override
@@ -71,7 +70,7 @@ public class MainFragment extends Fragment
             }
         });
 
-        LiveData<TranslationDirection> translationDirection = viewModel.getTranslationDirection();
+        LiveData<TranslationDirection> translationDirection = mainViewModel.getTranslationDirection();
         final TranslationDirection current = translationDirection.getValue();
 
         MaterialButton bnArrowDown = view.findViewById(R.id.ibn_arrow_down);
@@ -81,7 +80,7 @@ public class MainFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                viewModel.toggle(UNIDIRECTIONAL_TO_FOREIGN);
+                mainViewModel.toggle(UNIDIRECTIONAL_TO_FOREIGN);
             }
 
             @Override
@@ -112,7 +111,7 @@ public class MainFragment extends Fragment
             @Override
             public void onClick(View v)
             {
-                viewModel.toggle(UNIDIRECTIONAL_TO_MAIN);
+                mainViewModel.toggle(UNIDIRECTIONAL_TO_MAIN);
             }
 
             @Override
@@ -143,7 +142,7 @@ public class MainFragment extends Fragment
             String text = actvInput.getText().toString().trim();
             if (!text.isEmpty())
             {
-                viewModel.triggerTranslation(text);
+                mainViewModel.triggerTranslation(text);
             }
         });
     }
@@ -152,6 +151,6 @@ public class MainFragment extends Fragment
     public void onResume()
     {
         super.onResume();
-        viewModel.refreshLanguages();
+        mainViewModel.refreshLanguages();
     }
 }
