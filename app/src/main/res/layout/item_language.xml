@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+<!--    style="@style/Widget.App.Button.IconOnly"-->
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/mbn_active"
-        style="@style/Widget.App.Button.IconOnly"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@android:color/transparent"
@@ -36,9 +37,9 @@
         app:layout_constraintStart_toEndOf="@+id/mbn_active"
         app:layout_constraintTop_toTopOf="parent" />
 
+<!--    style="@style/Widget.App.Button.IconOnly"-->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/mbn_download"
-        style="@style/Widget.App.Button.IconOnly"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@android:color/transparent"

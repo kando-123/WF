@@ -1,20 +1,55 @@
 package pl.polsl.wf.data.source;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.model.TranslationDto;
+import pl.polsl.wf.data.source.remote.RemoteSource;
 
-/**
- * Implementation of ITranslationDataSource interface for online data source. It communicates
- * with Wiktionary and parses the responses.s
- */
 public class OnlineDataSource implements TranslationDataSource
 {
-    @Override
-    public void getTranslations(String headword, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, DataCallback<List<TranslationDto>> callback)
+    RemoteSource source;
+    public OnlineDataSource()
     {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        source = new RemoteSource();
+    }
+
+    @Override
+    public void getTranslations(
+            String headword,
+            String mainLanguageCode,
+            List<String> foreignLanguageCodes,
+            TranslationDirection direction,
+            DataCallback<List<TranslationDto>> callback
+    )
+    {
+        try {
+            List<TranslationDto> res;
+
+            switch (direction) {
+                case UNIDIRECTIONAL_TO_MAIN -> {
+                    res = source.getTranslationsToEnglish(headword, foreignLanguageCodes);
+                }
+                case UNIDIRECTIONAL_TO_FOREIGN -> {
+                    res = source.getTranslationsToForeign(headword, foreignLanguageCodes);
+                }
+                case BIDIRECTIONAL -> {
+                    res = source.getTranslationsToForeign(headword, foreignLanguageCodes);
+                    res.addAll(
+                            source.getTranslationsToEnglish(headword, foreignLanguageCodes)
+                    );
+                }
+                default -> {
+                    res = new ArrayList<>();
+                }
+            }
+            callback.onSuccess(res);
+        }
+        catch (Exception e)
+        {
+            callback.onError(e);
+        }
     }
 
     @Override

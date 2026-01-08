@@ -17,7 +17,7 @@ public class DataModule
     @Singleton
     public TranslationRepository provideTranslationRepository()
     {
-        return new MockTranslationRepository();
+        return new TranslationRepositoryImpl();
     }
 
     @Provides

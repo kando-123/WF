@@ -1,6 +1,11 @@
 package pl.polsl.wf.data.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.model.*;
+import pl.polsl.wf.data.source.remote.TranslationDtoDataCallback;
 import pl.polsl.wf.domain.model.*;
 
 /**
@@ -17,5 +22,19 @@ public class TranslationMapper
                 dto.getSourceLanguageCode(),
                 dto.getTargetLanguageCode(),
                 entryMapper.mapListToDomain(dto.getEntries()));
+    }
+
+    public void mapCallbackToDomain(TranslationDtoDataCallback source, DataCallback<List<Translation>> dest)
+    {
+        if (source.getException() != null)
+        {
+            dest.onError(source.getException());
+        }
+        else {
+            List<Translation> list = new ArrayList<>();
+            for (TranslationDto translationDto : source.getData())
+                list.add(mapToDomain(translationDto));
+            dest.onSuccess(list);
+        }
     }
 }

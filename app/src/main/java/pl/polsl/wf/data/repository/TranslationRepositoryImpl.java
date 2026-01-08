@@ -3,7 +3,10 @@ package pl.polsl.wf.data.repository;
 import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
+import pl.polsl.wf.data.mapper.TranslationMapper;
+import pl.polsl.wf.data.source.OnlineDataSource;
 import pl.polsl.wf.data.source.TranslationDirection;
+import pl.polsl.wf.data.source.remote.TranslationDtoDataCallback;
 import pl.polsl.wf.domain.model.Translation;
 import pl.polsl.wf.domain.repository.TranslationRepository;
 
@@ -12,10 +15,29 @@ import pl.polsl.wf.domain.repository.TranslationRepository;
  */
 public class TranslationRepositoryImpl implements TranslationRepository
 {
-    @Override
-    public void getTranslations(String headword, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, DataCallback<List<Translation>> callback)
+    private OnlineDataSource onlineDataSource;
+    private TranslationMapper translationMapper;
+    public TranslationRepositoryImpl()
     {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        onlineDataSource = new OnlineDataSource();
+        translationMapper = new TranslationMapper();
+    }
+    @Override
+    public void getTranslations(String headword,
+                                String mainLanguageCode,
+                                List<String> foreignLanguageCodes,
+                                TranslationDirection direction,
+                                DataCallback<List<Translation>> callback)
+    {
+        TranslationDtoDataCallback dataCallback = new TranslationDtoDataCallback();
+        onlineDataSource.getTranslations(
+                headword,
+                mainLanguageCode,
+                foreignLanguageCodes,
+                direction,
+                dataCallback
+        );
+        translationMapper.mapCallbackToDomain(dataCallback, callback);
     }
 
     @Override
