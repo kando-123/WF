@@ -45,7 +45,7 @@ public class ResultsViewModel extends ViewModel
 
         String mainLanguageCode = mainLanguage.code();
         List<String> foreignLanguageCodes = foreignLanguages.stream()
-                .map(Language::code)
+                .map(Language::name)
                 .toList();
 
         translateUseCase.execute(text, mainLanguageCode, foreignLanguageCodes, translationDirection,
