@@ -32,9 +32,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ibn_arrow_down" />
 
+    <!--        style="@style/Widget.App.Button.IconOnly"-->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ibn_arrow_down"
-        style="@style/Widget.App.Button.IconOnly"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginTop="24dp"
@@ -52,9 +52,9 @@
         app:iconTint="@android:color/black"
         app:iconGravity="textStart" />
 
+    <!--        style="@style/Widget.App.Button.IconOnly"-->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/ibn_arrow_up"
-        style="@style/Widget.App.Button.IconOnly"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:background="@android:color/transparent"

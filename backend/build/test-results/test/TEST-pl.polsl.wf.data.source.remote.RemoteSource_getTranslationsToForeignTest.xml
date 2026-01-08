@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="pl.polsl.wf.data.source.remote.RemoteSource_getTranslationsToForeignTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-01-05T01:34:59.373Z" hostname="forgetmenotflanks" time="1.634">
+  <properties/>
+  <testcase name="allTest" classname="pl.polsl.wf.data.source.remote.RemoteSource_getTranslationsToForeignTest" time="1.634"/>
+  <system-out><![CDATA[---------------------------------tcid0---------------------------------
+[
+]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
