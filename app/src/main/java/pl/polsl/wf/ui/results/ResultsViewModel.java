@@ -1,5 +1,7 @@
 package pl.polsl.wf.ui.results;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -39,23 +41,29 @@ public class ResultsViewModel extends ViewModel
                    List<Language> foreignLanguages,
                    TranslationDirection translationDirection)
     {
+        state.setValue(new UiState.Loading<>());
+
         String mainLanguageCode = mainLanguage.code();
         List<String> foreignLanguageCodes = foreignLanguages.stream()
                 .map(Language::code)
                 .toList();
+
         translateUseCase.execute(text, mainLanguageCode, foreignLanguageCodes, translationDirection,
                 new DataCallback<List<Translation>>()
                 {
                     @Override
                     public void onSuccess(List<Translation> data)
                     {
-                        state.setValue(new UiState.Success<>(data));
+                        state.postValue(new UiState.Success<>(data));
+                        Log.d("Translation", "Success: '" + data.toString() + "' @ ResultsViewModel");
                     }
 
                     @Override
                     public void onError(Exception exception)
                     {
-                        state.setValue(new UiState.Error<>(exception));
+                        state.postValue(new UiState.Error<>(exception));
+                        Log.d("Translation", "Failure: '" + exception.toString() + "', "
+                                + "message: '" + exception.getMessage() + "' @ ResultsViewModel");
                     }
                 });
     }

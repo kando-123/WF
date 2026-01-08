@@ -1,6 +1,7 @@
 package pl.polsl.wf.ui.results;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,6 +78,8 @@ public class ResultsFragment extends Fragment
                 var success = (UiState.Success<List<Translation>>) state;
                 renderTranslationsList(success.data);
 
+                Log.d("Translation", "Success: '" + success.data.toString() + "' @ ResultsFragment");
+
                 Toast.makeText(getContext(),
                         "Translation successful",
                         Toast.LENGTH_LONG)
@@ -85,6 +88,10 @@ public class ResultsFragment extends Fragment
             else if (state.isError())
             {
                 var failure = (UiState.Error<List<Translation>>) state;
+
+                Log.d("Translation", "Failure: '" + failure.cause.toString() + "', "
+                        + "message: '" + failure.cause.getMessage() + "' @ ResultsFragment");
+
                 Toast.makeText(getContext(),
                         "Translation failed: " + failure.cause.getMessage(),
                         Toast.LENGTH_LONG)

@@ -1,6 +1,7 @@
 package pl.polsl.wf.domain.usecase;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 
@@ -12,11 +13,14 @@ import pl.polsl.wf.domain.repository.*;
 public class TranslateUseCase
 {
     private final TranslationRepository translationRepo;
+    private final ExecutorService executor;
 
     @Inject
-    public TranslateUseCase(TranslationRepository translationRepo)
+    public TranslateUseCase(TranslationRepository translationRepo,
+                            ExecutorService executor)
     {
         this.translationRepo = translationRepo;
+        this.executor = executor;
     }
 
     public void execute(String headword,
@@ -25,12 +29,17 @@ public class TranslateUseCase
                         TranslationDirection direction,
                         DataCallback<List<Translation>> callback)
     {
-        // Validation...
-
-        translationRepo.getTranslations(headword,
-                    mainLanguageCode,
-                    foreignLanguageCodes,
-                    direction,
-                    callback);
+        executor.execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                translationRepo.getTranslations(headword,
+                        mainLanguageCode,
+                        foreignLanguageCodes,
+                        direction,
+                        callback);
+            }
+        });
     }
 }
