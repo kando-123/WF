@@ -2,17 +2,26 @@ package pl.polsl.wf.data.source;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.model.TranslationDto;
-import pl.polsl.wf.data.source.remote.RemoteSource;
+import pl.polsl.wf.data.source.remote.RemoteTranslationSource;
 
 public class OnlineDataSource implements TranslationDataSource
 {
-    RemoteSource source;
+    private RemoteTranslationSource source;
+    private OkHttpClient httpClient;
+    private Pattern titleRegex;
     public OnlineDataSource()
     {
-        source = new RemoteSource();
+        httpClient = new OkHttpClient();
+        source = new RemoteTranslationSource();
+        titleRegex = Pattern.compile("\"title\": \"(.+?)\"");
     }
 
     @Override
@@ -51,10 +60,33 @@ public class OnlineDataSource implements TranslationDataSource
             callback.onError(e);
         }
     }
-
     @Override
-    public List<String> getHints(String input, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, int maxCount, DataCallback<List<String>> callback)
+    public void getHints(
+            String input,
+            String mainLanguageCode,
+            List<String> foreignLanguageCodes,
+            TranslationDirection direction,
+            int maxCount,
+            DataCallback<List<String>> callback
+    )
     {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        try {
+            String url = "https://en.wiktionary.org/w/api.php?action=query&list=prefixsearch&pssearch="
+                    + input.replace(" ", "_") + "&format=json";
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header("User-Agent", "WiktionaryFiltering/0.0 (tichalik@gmail.com)")
+                    .build();
+            Response response = httpClient.newCall(request).execute();
+
+            Matcher m = titleRegex.matcher(response.body().string());
+            List<String> res = new ArrayList<>();
+            while (m.find())
+                res.add(m.group(1));
+
+            callback.onSuccess(res);
+        } catch (Exception e) {
+            callback.onError(e);
+        }
     }
 }

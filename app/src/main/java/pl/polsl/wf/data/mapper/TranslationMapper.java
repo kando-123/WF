@@ -5,7 +5,7 @@ import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.model.*;
-import pl.polsl.wf.data.source.remote.TranslationDtoDataCallback;
+import pl.polsl.wf.data.source.remote.DataCallbackImp;
 import pl.polsl.wf.domain.model.*;
 
 /**
@@ -24,7 +24,7 @@ public class TranslationMapper
                 entryMapper.mapListToDomain(dto.getEntries()));
     }
 
-    public void mapCallbackToDomain(TranslationDtoDataCallback source, DataCallback<List<Translation>> dest)
+    public void mapCallbackToDomain(DataCallbackImp<List<TranslationDto>> source, DataCallback<List<Translation>> dest)
     {
         if (source.getException() != null)
         {

@@ -28,7 +28,7 @@ public interface TranslationDataSource
                          List<String> foreignLanguageCodes,
                          TranslationDirection direction,
                          DataCallback<List<TranslationDto>> callback);
-    List<String> getHints(String input,
+    void getHints(String input,
                           String mainLanguageCode,
                           List<String> foreignLanguageCodes,
                           TranslationDirection direction,

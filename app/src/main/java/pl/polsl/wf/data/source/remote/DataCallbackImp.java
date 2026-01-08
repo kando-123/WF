@@ -1,26 +1,22 @@
 package pl.polsl.wf.data.source.remote;
 
-import java.util.List;
-
 import pl.polsl.wf.common.util.DataCallback;
-import pl.polsl.wf.data.model.TranslationDto;
-import pl.polsl.wf.domain.model.Translation;
 
-public class TranslationDtoDataCallback implements DataCallback<List<TranslationDto>>
+public class DataCallbackImp<T> implements DataCallback<T>
 {
     public Exception getException() {
         return exception;
     }
 
-    public List<TranslationDto> getData() {
+    public T getData() {
         return data;
     }
 
     private Exception exception;
-    private List<TranslationDto> data;
+    private T data;
 
     @Override
-    public void onSuccess(List<TranslationDto> data) {
+    public void onSuccess(T data) {
         this.data = data;
     }
 
@@ -28,5 +24,4 @@ public class TranslationDtoDataCallback implements DataCallback<List<Translation
     public void onError(Exception exception) {
         this.exception = exception;
     }
-
 }

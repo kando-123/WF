@@ -18,7 +18,7 @@ public class OfflineDataSource implements TranslationDataSource
     }
 
     @Override
-    public List<String> getHints(String input, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, int maxCount, DataCallback<List<String>> callback)
+    public void getHints(String input, String mainLanguageCode, List<String> foreignLanguageCodes, TranslationDirection direction, int maxCount, DataCallback<List<String>> callback)
     {
         throw new UnsupportedOperationException("Not implemented yet.");
     }

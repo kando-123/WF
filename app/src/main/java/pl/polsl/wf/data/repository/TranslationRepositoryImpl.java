@@ -4,9 +4,10 @@ import java.util.List;
 
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.mapper.TranslationMapper;
+import pl.polsl.wf.data.model.TranslationDto;
 import pl.polsl.wf.data.source.OnlineDataSource;
 import pl.polsl.wf.data.source.TranslationDirection;
-import pl.polsl.wf.data.source.remote.TranslationDtoDataCallback;
+import pl.polsl.wf.data.source.remote.DataCallbackImp;
 import pl.polsl.wf.domain.model.Translation;
 import pl.polsl.wf.domain.repository.TranslationRepository;
 
@@ -29,7 +30,7 @@ public class TranslationRepositoryImpl implements TranslationRepository
                                 TranslationDirection direction,
                                 DataCallback<List<Translation>> callback)
     {
-        TranslationDtoDataCallback dataCallback = new TranslationDtoDataCallback();
+        DataCallbackImp<List<TranslationDto>> dataCallback = new DataCallbackImp<List<TranslationDto>>();
         onlineDataSource.getTranslations(
                 headword,
                 mainLanguageCode,

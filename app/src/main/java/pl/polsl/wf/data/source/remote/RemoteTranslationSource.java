@@ -1,6 +1,5 @@
 package pl.polsl.wf.data.source.remote;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,7 +12,7 @@ import pl.polsl.wf.data.model.TranslationDto;
 import pl.polsl.wf.data.model.TranslationEntryDto;
 import pl.polsl.wf.data.model.TranslationEntryPhraseDto;
 
-public class RemoteSource {
+public class RemoteTranslationSource {
 
     private RemoveComments removeComments;
     private ResolveLinks resolveLinks;
@@ -36,7 +35,7 @@ public class RemoteSource {
     );
 
 
-    public RemoteSource()
+    public RemoteTranslationSource()
     {
         removeHTML = new RemoveHTML();
         resolveLinks = new ResolveLinks();
