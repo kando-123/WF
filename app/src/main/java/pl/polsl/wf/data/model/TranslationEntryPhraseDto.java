@@ -11,10 +11,8 @@ public class TranslationEntryPhraseDto
     private final String link;
 
     public TranslationEntryPhraseDto(
-// @kamil
 //            @Nonnull
             String text,
-// @kamil
 //            @Nullable
             String link)
     {
@@ -23,11 +21,9 @@ public class TranslationEntryPhraseDto
     }
 
     public TranslationEntryPhraseDto(
-// @kamil
-//            @Nonnull
             String text)
     {
-        this(text, text);
+        this(text, null);
     }
 
     public String getText()

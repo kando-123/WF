@@ -66,9 +66,9 @@ public class RemoteTranslationSource {
         List<TranslationEntryPhraseDto> res = new ArrayList<>();
         while (m.find())
         {
-            res.add(new TranslationEntryPhraseDto(
-                    transliterationRegex.matcher(m.group(1)).replaceAll("($1)").replace("|"," ")
-            ));
+            String translation = transliterationRegex.matcher(m.group(1)).replaceAll("($1)").replace("|"," ");
+            res.addAll(resolveLinks.process(translation));
+//            res.add(new TranslationEntryPhraseDto(translation));
         }
         return res;
     }
