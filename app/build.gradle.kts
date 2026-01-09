@@ -9,6 +9,11 @@ android {
         version = release(36)
     }
 
+    testOptions {
+        unitTests{
+            isReturnDefaultValues = true
+        }
+    }
     defaultConfig {
         applicationId = "pl.polsl.wf"
         minSdk = 24

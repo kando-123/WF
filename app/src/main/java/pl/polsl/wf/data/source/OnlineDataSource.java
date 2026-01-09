@@ -21,7 +21,7 @@ public class OnlineDataSource implements TranslationDataSource
     {
         httpClient = new OkHttpClient();
         source = new RemoteTranslationSource();
-        titleRegex = Pattern.compile("\"title\": \"(.+?)\"");
+        titleRegex = Pattern.compile("\"title\": ?\"(.+?)\"");
     }
 
     @Override

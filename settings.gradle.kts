@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "WF"
 include(":app")
-include(":backend")
+//include(":backend")
