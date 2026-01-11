@@ -21,8 +21,8 @@ public class RemoteTranslationSource {
     private Pattern translationsToForeignRegex;
     private Pattern transliterationRegex;
     private  Pattern translationChunkRegex;
-    private OkHttpClient httpClient;
 
+    private WiktionaryApi wiktionaryApi;
 
 
     private static final List<String> allAttributes = List.of(
@@ -45,20 +45,7 @@ public class RemoteTranslationSource {
         transliterationRegex = Pattern.compile("tr=(.+?)(\\}\\}|\\||$)");
         translationChunkRegex =
                 Pattern.compile("\\{\\{trans-top\\|([\\w\\W]+?)\\}\\}([\\w\\W]+?)\\{\\{trans-bottom\\}\\}");
-        httpClient = new OkHttpClient();
-
-    }
-    private String getMarkdownForHeadword(String headword) throws Exception
-    {
-        String url = ("https://en.wiktionary.org/w/index.php?title="
-                +headword.replace(" ", "_")
-                +"&action=raw");
-        Request request = new Request.Builder()
-                .url(url)
-                .header("User-Agent", "WiktionaryFiltering/0.0 (tichalik@gmail.com)")
-                .build();
-        Response response = httpClient.newCall(request).execute();
-        return response.body().string();
+        wiktionaryApi = new WiktionaryApi();
     }
     private List<TranslationEntryPhraseDto> extractTranslationsToForeign(CharSequence input)
     {
@@ -80,7 +67,7 @@ public class RemoteTranslationSource {
 
         List<TranslationDto> res = new ArrayList<>();
 
-        String markdown = getMarkdownForHeadword(headword);
+        String markdown = wiktionaryApi.getPageContents(headword);
         markdown = removeComments.process(markdown);
 
         MarkdownHeader langHeader = MarkdownHeader.headerWithAnyKeyword(List.of("English"), 0, markdown);
@@ -146,7 +133,7 @@ public class RemoteTranslationSource {
     {
         List<TranslationDto> res = new ArrayList<>();
 
-        String markdown = getMarkdownForHeadword(headword);
+        String markdown = wiktionaryApi.getPageContents(headword);
         markdown = removeComments.process(markdown);
 
         MarkdownHeader langHeader = MarkdownHeader.headerWithAnyKeyword(foreigns, 0, markdown);

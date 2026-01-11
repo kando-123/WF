@@ -11,16 +11,17 @@ import okhttp3.Response;
 import pl.polsl.wf.common.util.DataCallback;
 import pl.polsl.wf.data.model.TranslationDto;
 import pl.polsl.wf.data.source.remote.RemoteTranslationSource;
+import pl.polsl.wf.data.source.remote.WiktionaryApi;
 
 public class OnlineDataSource implements TranslationDataSource
 {
     private RemoteTranslationSource source;
-    private OkHttpClient httpClient;
     private Pattern titleRegex;
+    private WiktionaryApi wiktionaryApi;
     public OnlineDataSource()
     {
-        httpClient = new OkHttpClient();
         source = new RemoteTranslationSource();
+        wiktionaryApi = new WiktionaryApi();
         titleRegex = Pattern.compile("\"title\": ?\"(.+?)\"");
     }
 
@@ -71,15 +72,25 @@ public class OnlineDataSource implements TranslationDataSource
     )
     {
         try {
-            String url = "https://en.wiktionary.org/w/api.php?action=query&list=prefixsearch&pssearch="
-                    + input.replace(" ", "_") + "&format=json";
-            Request request = new Request.Builder()
-                    .url(url)
-                    .header("User-Agent", "WiktionaryFiltering/0.0 (tichalik@gmail.com)")
-                    .build();
-            Response response = httpClient.newCall(request).execute();
+            List<String> languages;
+            switch (direction) {
+                case UNIDIRECTIONAL_TO_MAIN -> {
+                    languages = foreignLanguageCodes;
+                }
+                case UNIDIRECTIONAL_TO_FOREIGN -> {
+                    languages = List.of(mainLanguageCode);
+                }
+                case BIDIRECTIONAL -> {
+                    languages = foreignLanguageCodes;
+                    languages.add(mainLanguageCode);
+                }
+                default -> {
+                    languages = new ArrayList<>();
+                }
+            }
 
-            Matcher m = titleRegex.matcher(response.body().string());
+            String json = wiktionaryApi.getHints(input, languages, maxCount );
+            Matcher m = titleRegex.matcher(json);
             List<String> res = new ArrayList<>();
             while (m.find())
                 res.add(m.group(1));
