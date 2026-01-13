@@ -21,6 +21,7 @@ public class RemoteTranslationSource {
     private Pattern translationsToForeignRegex;
     private Pattern transliterationRegex;
     private  Pattern translationChunkRegex;
+    private Pattern translationSubpageRegex;
 
     private WiktionaryApi wiktionaryApi;
 
@@ -46,6 +47,7 @@ public class RemoteTranslationSource {
         translationChunkRegex =
                 Pattern.compile("\\{\\{trans-top\\|([\\w\\W]+?)\\}\\}([\\w\\W]+?)\\{\\{trans-bottom\\}\\}");
         wiktionaryApi = new WiktionaryApi();
+        translationSubpageRegex = Pattern.compile("\\{\\{see translation subpage\\|.+\\}\\}");
     }
     private List<TranslationEntryPhraseDto> extractTranslationsToForeign(CharSequence input)
     {
@@ -64,12 +66,27 @@ public class RemoteTranslationSource {
             List<String> foreigns
     ) throws Exception
     {
+        return getTranslationsToForeign(headword, headword, foreigns);
+    }
 
-        List<TranslationDto> res = new ArrayList<>();
+    private List<TranslationDto> getTranslationsToForeign(
+            String apiHeadword,
+            String translationHeadword,
+            List<String> foreigns
+    ) throws Exception
+    {
 
-        String markdown = wiktionaryApi.getPageContents(headword);
+        List<TranslationDto> res;
+        String markdown = wiktionaryApi.getPageContents(apiHeadword);
         markdown = removeComments.process(markdown);
 
+        if (translationSubpageRegex.matcher(markdown).find())
+        {
+            res = getTranslationsToForeign(apiHeadword+"/translations", translationHeadword, foreigns);
+        }
+        else {
+            res = new ArrayList<>();
+        }
         MarkdownHeader langHeader = MarkdownHeader.headerWithAnyKeyword(List.of("English"), 0, markdown);
         if (langHeader.next())
         {
@@ -90,13 +107,14 @@ public class RemoteTranslationSource {
                     while(singleTranslationMatcher.find())
                     {
                         res.add(new TranslationDto(
-                                headword,
+                                translationHeadword,
                                 List.of(attrHeader.getHeadword()),
                                 "English",
                                  singleTranslationMatcher.group(1),
                                 List.of(new TranslationEntryDto(
                                         translationsChunk.group(1),
-                                        extractTranslationsToForeign(singleTranslationMatcher.group(2))))
+                                        extractTranslationsToForeign(
+                                                removeHTML.process(singleTranslationMatcher.group(2)))))
                         ));
                     }
                 }
@@ -106,7 +124,8 @@ public class RemoteTranslationSource {
         return res;
     }
 
-    private List<TranslationEntryDto> translationsFromChunk(MarkdownHeader attrHeader, MarkdownChunk langChunk ) throws Exception
+    private List<TranslationEntryDto> getTranslationEntriesToEnglish(
+            MarkdownHeader attrHeader, MarkdownChunk langChunk ) throws Exception
     {
         LeafMarkdownChunk attrChunk = new LeafMarkdownChunk(attrHeader, langChunk.contents);
         List<TranslationEntryDto> translationEntryDtos = new ArrayList<>();
@@ -149,7 +168,7 @@ public class RemoteTranslationSource {
                         List.of(attrHeader.getHeadword()),
                         langHeader.getHeadword(),
                         "English",
-                        translationsFromChunk(attrHeader, langChunk)
+                        getTranslationEntriesToEnglish(attrHeader, langChunk)
                 ));
             }
         }

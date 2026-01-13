@@ -14,8 +14,8 @@ public class RemoteTranslationSource_getTranslationsToForeignTest {
     public void allTest()
     {
         List<String> inputs = List.of(
-                "cat"
-//                "basket",
+//                "cat"
+                "basket"
 //                "Burkina Faso",
 //                "WWW",
 //                "a cappella",
