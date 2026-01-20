@@ -81,6 +81,7 @@ public class DefaultTranslationRenderer implements TranslationRenderer
                     .collect(Collectors.joining("; "));
             phrases.setText(phrasesText);
             phrases.setPaddingRelative(48, 4, 4,4);
+            phrases.setTextSize(24);
             layout.addView(phrases);
         }
         else
@@ -94,6 +95,7 @@ public class DefaultTranslationRenderer implements TranslationRenderer
                     .append(". ")
                     .append(phrasesText));
             phrases.setPaddingRelative(8, 4, 4,4);
+            phrases.setTextSize(24);
             layout.addView(phrases);
         }
 
